@@ -1,4 +1,4 @@
-package online.manongbbq.aieducation;
+package online.manongbbq.aieducation.Activity;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import online.manongbbq.aieducation.R;
 
 public class MainActivity extends AppCompatActivity {
 
