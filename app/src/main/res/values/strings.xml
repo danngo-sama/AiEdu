@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AI Education</string>
+    <string name="underlined_text"><u>点击注册</u></string>
 </resources>

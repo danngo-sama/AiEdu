@@ -1,6 +1,6 @@
-<!-- res/drawable/button_background_default.xml -->
+<!-- res/drawable/button_background_pressed.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#ADD8E6" /> <!-- 深蓝色 -->
+    <solid android:color="#e0f7ff" /> <!-- 极淡的蓝色 -->
     <corners android:radius="16dp" /> <!-- 圆角半径 -->
 </shape>
