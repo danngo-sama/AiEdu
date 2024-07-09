@@ -25,7 +25,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 创建了5个表
+     * 创建了6个表
      *
      * @param db The database.
      */
@@ -42,6 +42,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 "leavestudentid INTEGER, leaveclassid INTEGER, leavedate DATE)");
         db.execSQL("CREATE TABLE airequest (requestid INTEGER PRIMARY KEY, requestcontent TEXT, " +
                 "requestresult TEXT)");
+        db.execSQL("CREATE TABLE schedule (scheduleid INTEGER PRIMARY KEY, starttime TIMESTAMP, " +
+                "endtime TIMESTAMP, task TEXT)");
     }
 
     /**
@@ -59,6 +61,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS errorbook");
         db.execSQL("DROP TABLE IF EXISTS leaveinfo");
         db.execSQL("DROP TABLE IF EXISTS airequest");
+        db.execSQL("DROP TABLE IF EXISTS schedule");
         onCreate(db);
     }
 }
