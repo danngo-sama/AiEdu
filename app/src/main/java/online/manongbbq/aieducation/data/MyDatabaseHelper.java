@@ -15,10 +15,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "database.db";
     private static final int DATABASE_VERSION = 1;
 
+    /**
+     * 构造方法
+     *
+     * @param context 上下文
+     */
     public MyDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * 创建了5个表
+     *
+     * @param db The database.
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         // 创建表
@@ -34,6 +44,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 "requestresult TEXT)");
     }
 
+    /**
+     * 升级数据库（重置数据库）
+     *
+     * @param db         The database.
+     * @param oldVersion The old database version.
+     * @param newVersion The new database version.
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // 升级数据库（这里简单地删除旧表并创建新表）

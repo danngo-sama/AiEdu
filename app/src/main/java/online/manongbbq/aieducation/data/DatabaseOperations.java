@@ -15,127 +15,137 @@ import java.util.List;
  * Use function to save and load information.
  * <p><h1>all functions</h1></p>
  * <p>
- *     以下为所有方法的定义和<strong>部分</strong>用例。
- *     <ui>
- *         <li>
- *             <p>{@link #insertUserInfo(Context, int, int, String, byte[], boolean)}</p>
- *             <p>{@code DatabaseOperations.insertUserInfo(this, 1, 123456, "John Doe", null, true);}
- *             // 插入用户信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #insertClassInfo(Context, int, String, String)}</p>
- *             <p>{@code DatabaseOperations.insertClassInfo(this, 1, "Math", "This is a math course.");}
- *             // 插入课程信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #insertErrorBook(Context, int, byte[], String)}</p>
- *             <p>{@code DatabaseOperations.insertErrorBook(this, 1, null, "Error analysis here.");}
- *             // 插入错题本信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #insertLeaveInfo(Context, int, String, int, int, String)}</p>
- *             <p>{@code DatabaseOperations.insertLeaveInfo(this, 1, "Personal reasons", 1, 1, "2023-07-01");}
- *             // 插入请假信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #insertAIRequest(Context, int, String, String)}</p>
- *             <p>{@code DatabaseOperations.insertAIRequest(this, "Request content", "Request result");}
- *             // 插入AI请求信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #queryUserInfo(Context)}</p>
- *             <p>{@code DatabaseOperations.queryUserInfo(this);}
- *             // 查询所有用户信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #queryUserInfo(Context, int)}</p>
- *             <p>{@code DatabaseOperations.queryUserInfo(this, 1);}
- *             // 查询某个用户信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #queryClassInfo(Context)}</p>
- *             <p>{@code DatabaseOperations.queryClassInfo(this);}
- *             // 查询所有课程信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #queryClassInfo(Context, int)}</p>
- *             <p>{@code DatabaseOperations.queryClassInfo(this， 1);}
- *             // 查询某个课程信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #queryErrorBook(Context)}</p>
- *             <p>{@code DatabaseOperations.queryErrorBook(this);}
- *             // 查询错题本信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #queryLeaveInfo(Context)}</p>
- *             <p>{@code DatabaseOperations.queryLeaveInfo(this);}
- *             // 查询请假信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #queryAIRequest(Context)}</p>
- *             <p>{@code DatabaseOperations.queryAIRequest(this);}
- *             // 查询AI请求信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #updateUserInfo(Context, int, int, String, byte[], boolean)}</p>
- *             <p>{@code DatabaseOperations.updateUserInfo(this, 1, 654321, "Jane Doe", null, false);}
- *             // 更新用户信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #updateClassInfo(Context, int, String, String)}</p>
- *             <p>{@code }
- *             // 更新课程信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #updateErrorBook(Context, int, byte[], String)}</p>
- *             <p>{@code }
- *             // 更新错题本信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #updateLeaveInfo(Context, int, String, int, int, String)}</p>
- *             <p>{@code }
- *             // 更新请假信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #updateAIRequest(Context, int, String, String)}</p>
- *             <p>{@code }
- *             // 更新AI请求信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #deleteUserInfo(Context, int)}</p>
- *             <p>{@code }
- *             // 删除用户信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #deleteClassInfo(Context, int)}</p>
- *             <p>{@code }
- *             // 删除课程信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #deleteErrorBook(Context, int)}</p>
- *             <p>{@code }
- *             // 删除错题本信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #deleteLeaveInfo(Context, int)}</p>
- *             <p>{@code DatabaseOperations.deleteLeaveInfo(this, 1);}
- *             // 删除请假信息</p>
- *         </li>
- *         <li>
- *             <p>{@link #deleteAIRequest(Context, int)}</p>
- *             <p>{@code }
- *             // 删除AI请求信息</p>
- *         </li>
- *     </ui>
+ * 以下为所有方法的定义和<strong>部分</strong>用例。
+ * <ui>
+ * <li>
+ * <p>{@link #insertUserInfo(Context, int, int, String, byte[], boolean)}</p>
+ * <p>{@code DatabaseOperations.insertUserInfo(this, 1, 123456, "John Doe", null, true);}
+ * // 插入用户信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #insertClassInfo(Context, int, String, String)}</p>
+ * <p>{@code DatabaseOperations.insertClassInfo(this, 1, "Math", "This is a math course.");}
+ * // 插入课程信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #insertErrorBook(Context, int, byte[], String)}</p>
+ * <p>{@code DatabaseOperations.insertErrorBook(this, 1, null, "Error analysis here.");}
+ * // 插入错题本信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #insertLeaveInfo(Context, int, String, int, int, String)}</p>
+ * <p>{@code DatabaseOperations.insertLeaveInfo(this, 1, "Personal reasons", 1, 1, "2023-07-01");}
+ * // 插入请假信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #insertAIRequest(Context, int, String, String)}</p>
+ * <p>{@code DatabaseOperations.insertAIRequest(this, "Request content", "Request result");}
+ * // 插入AI请求信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #queryUserInfo(Context)}</p>
+ * <p>{@code DatabaseOperations.queryUserInfo(this);}
+ * // 查询所有用户信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #queryUserInfo(Context, int)}</p>
+ * <p>{@code DatabaseOperations.queryUserInfo(this, 1);}
+ * // 查询某个用户信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #queryClassInfo(Context)}</p>
+ * <p>{@code DatabaseOperations.queryClassInfo(this);}
+ * // 查询所有课程信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #queryClassInfo(Context, int)}</p>
+ * <p>{@code DatabaseOperations.queryClassInfo(this， 1);}
+ * // 查询某个课程信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #queryErrorBook(Context)}</p>
+ * <p>{@code DatabaseOperations.queryErrorBook(this);}
+ * // 查询错题本信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #queryLeaveInfo(Context)}</p>
+ * <p>{@code DatabaseOperations.queryLeaveInfo(this);}
+ * // 查询请假信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #queryAIRequest(Context)}</p>
+ * <p>{@code DatabaseOperations.queryAIRequest(this);}
+ * // 查询AI请求信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #updateUserInfo(Context, int, int, String, byte[], boolean)}</p>
+ * <p>{@code DatabaseOperations.updateUserInfo(this, 1, 654321, "Jane Doe", null, false);}
+ * // 更新用户信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #updateClassInfo(Context, int, String, String)}</p>
+ * <p>{@code }
+ * // 更新课程信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #updateErrorBook(Context, int, byte[], String)}</p>
+ * <p>{@code }
+ * // 更新错题本信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #updateLeaveInfo(Context, int, String, int, int, String)}</p>
+ * <p>{@code }
+ * // 更新请假信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #updateAIRequest(Context, int, String, String)}</p>
+ * <p>{@code }
+ * // 更新AI请求信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #deleteUserInfo(Context, int)}</p>
+ * <p>{@code }
+ * // 删除用户信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #deleteClassInfo(Context, int)}</p>
+ * <p>{@code }
+ * // 删除课程信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #deleteErrorBook(Context, int)}</p>
+ * <p>{@code }
+ * // 删除错题本信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #deleteLeaveInfo(Context, int)}</p>
+ * <p>{@code DatabaseOperations.deleteLeaveInfo(this, 1);}
+ * // 删除请假信息</p>
+ * </li>
+ * <li>
+ * <p>{@link #deleteAIRequest(Context, int)}</p>
+ * <p>{@code }
+ * // 删除AI请求信息</p>
+ * </li>
+ * </ui>
  * </p>
  *
  * @author liang zifan
  * @version 0.0.2
+ * @see MyDatabaseHelper
  * @since 07/08
  */
 public class DatabaseOperations {
-    // 插入用户信息
+    /**
+     * 插入用户信息
+     *
+     * @param context   上下文
+     * @param userid    账号/学工号
+     * @param password  密码
+     * @param name      姓名
+     * @param facedata  面部信息
+     * @param isstudent 是否学生标记
+     */
     public static void insertUserInfo(Context context, int userid, int password, String name,
                                       byte[] facedata, boolean isstudent) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
@@ -152,7 +162,15 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 插入课程信息
+
+    /**
+     * 插入课程信息
+     *
+     * @param context           上下文
+     * @param classid           课程号
+     * @param coursename        课程名
+     * @param coursedescription 课程描述
+     */
     public static void insertClassInfo(Context context, int classid, String coursename,
                                        String coursedescription) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
@@ -167,7 +185,15 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 插入错题本信息
+
+    /**
+     * 插入错题本信息
+     *
+     * @param context     上下文
+     * @param bookid      错题编号
+     * @param errorimg    错题图片
+     * @param erroranalys 错题分析
+     */
     public static void insertErrorBook(Context context, int bookid, byte[] errorimg,
                                        String erroranalys) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
@@ -182,7 +208,17 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 插入请假信息
+
+    /**
+     * 插入请假信息
+     *
+     * @param context        上下文
+     * @param leaveid        请假编号
+     * @param leavecontent   请假内容
+     * @param leavestudentid 请假学生id
+     * @param leaveclassid   请假课程id
+     * @param leavedate      请假时间
+     */
     public static void insertLeaveInfo(Context context, int leaveid, String leavecontent,
                                        int leavestudentid, int leaveclassid, String leavedate) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
@@ -199,7 +235,15 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 插入AI请求信息
+
+    /**
+     * 插入AI请求信息
+     *
+     * @param context        上下文
+     * @param requestid      ai请求id
+     * @param requestcontent 请求内容
+     * @param requestresult  请求结果
+     */
     public static void insertAIRequest(Context context, int requestid, String requestcontent,
                                        String requestresult) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
@@ -214,7 +258,23 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 查询所有用户信息
+
+    /**
+     * 查询所有用户信息。
+     * <p>
+     * 返回列表，其中每一项为一个JSON对象，JSON的name为
+     * <ui>
+     * <li>userid
+     * <li>password
+     * <li>name
+     * <li>facedata
+     * <li>isstudent
+     * </ui></p>
+     *
+     * @param context 上下文
+     * @return 包含所有用户信息的List
+     * @throws JSONException JSON错误
+     */
     public static List<JSONObject> queryUserInfo(Context context) throws JSONException {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -260,7 +320,24 @@ public class DatabaseOperations {
         return data;
     }
 
-    // 查询某个用户信息
+
+    /**
+     * 查询某个用户信息。
+     * <p>
+     * 返回列表，其中每一项为一个JSON对象，JSON的name为
+     * <ui>
+     * <li>userid
+     * <li>password
+     * <li>name
+     * <li>facedata
+     * <li>isstudent
+     * </ui></p>
+     *
+     * @param context 上下文
+     * @param id      查找对象的id
+     * @return 包含用户信息的List
+     * @throws JSONException JSON错误
+     */
     public static List<JSONObject> queryUserInfo(Context context, int id) throws JSONException {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -309,7 +386,21 @@ public class DatabaseOperations {
         return data;
     }
 
-    // 查询所有课程信息
+
+    /**
+     * 查询所有课程信息。
+     * <p>
+     * 返回列表，其中每一项为一个JSON对象，JSON的name为
+     * <ui>
+     * <li>classid
+     * <li>coursename
+     * <li>coursedescription
+     * </ui></p>
+     *
+     * @param context 上下文
+     * @return 包含所有课程信息的List
+     * @throws JSONException JSON错误
+     */
     public static List<JSONObject> queryClassInfo(Context context) throws JSONException {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -349,7 +440,22 @@ public class DatabaseOperations {
         return data;
     }
 
-    // 查询某个课程信息
+
+    /**
+     * 查查询某个课程信。
+     * <p>
+     * 返回列表，其中每一项为一个JSON对象，JSON的name为
+     * <ui>
+     * <li>classid
+     * <li>coursename
+     * <li>coursedescription
+     * </ui></p>
+     *
+     * @param context 上下文
+     * @param id      查找对象的id
+     * @return 包含课程信息的List
+     * @throws JSONException JSON错误
+     */
     public static List<JSONObject> queryClassInfo(Context context, int id) throws JSONException {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -392,7 +498,21 @@ public class DatabaseOperations {
         return data;
     }
 
-    // 查询错题本信息
+
+    /**
+     * 查询错题本信息。
+     * <p>
+     * 返回列表，其中每一项为一个JSON对象，JSON的name为
+     * <ui>
+     * <li>bookid
+     * <li>errorimg
+     * <li>erroranalys
+     * </ui></p>
+     *
+     * @param context 上下文
+     * @return 包含错题信息的List
+     * @throws JSONException JSON错误
+     */
     public static List<JSONObject> queryErrorBook(Context context) throws JSONException {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -432,7 +552,23 @@ public class DatabaseOperations {
         return data;
     }
 
-    // 查询请假信息
+
+    /**
+     * 查询请假信息。
+     * <p>
+     * 返回列表，其中每一项为一个JSON对象，JSON的name为
+     * <ui>
+     * <li>leaveid
+     * <li>leavecontent
+     * <li>leavestudentid
+     * <li>leaveclassid
+     * <li>leavedate
+     * </ui></p>
+     *
+     * @param context 上下文
+     * @return 包含所有请假信息的List
+     * @throws JSONException JSON错误
+     */
     public static List<JSONObject> queryLeaveInfo(Context context) throws JSONException {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -478,7 +614,21 @@ public class DatabaseOperations {
         return data;
     }
 
-    // 查询AI请求信息
+
+    /**
+     * 查询AI请求信息。
+     * <p>
+     * 返回列表，其中每一项为一个JSON对象，JSON的name为
+     * <ui>
+     * <li>requestid
+     * <li>requestcontent
+     * <li>requestresult
+     * </ui></p>
+     *
+     * @param context 上下文
+     * @return 包含所有ai请求信息的List
+     * @throws JSONException JSON错误
+     */
     public static List<JSONObject> queryAIRequest(Context context) throws JSONException {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -518,7 +668,17 @@ public class DatabaseOperations {
         return data;
     }
 
-    // 更新用户信息
+
+    /**
+     * 更新用户信息
+     *
+     * @param context      上下文
+     * @param userid       账号/学工号
+     * @param newPassword  密码
+     * @param newName      姓名
+     * @param newFacedata  面部信息
+     * @param newIsStudent 是否学生标记
+     */
     public static void updateUserInfo(Context context, int userid, int newPassword, String newName, byte[] newFacedata, boolean newIsStudent) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -536,7 +696,15 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 更新课程信息
+
+    /**
+     * 更新课程信息
+     *
+     * @param context              上下文
+     * @param classid              课程号
+     * @param newCoursename        课程名
+     * @param newCoursedescription 课程描述
+     */
     public static void updateClassInfo(Context context, int classid, String newCoursename, String newCoursedescription) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -552,7 +720,15 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 更新错题本信息
+
+    /**
+     * 更新错题本信息
+     *
+     * @param context        上下文
+     * @param bookid         错题编号
+     * @param newErrorimg    错题图片
+     * @param newErroranalys 错题分析
+     */
     public static void updateErrorBook(Context context, int bookid, byte[] newErrorimg, String newErroranalys) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -568,7 +744,17 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 更新请假信息
+
+    /**
+     * 更新请假信息
+     *
+     * @param context           上下文
+     * @param leaveid           请假编号
+     * @param newLeavecontent   请假内容
+     * @param newLeavestudentid 请假学生id
+     * @param newLeaveclassid   请假课程id
+     * @param newLeavedate      请假时间
+     */
     public static void updateLeaveInfo(Context context, int leaveid, String newLeavecontent, int newLeavestudentid, int newLeaveclassid, String newLeavedate) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -586,7 +772,15 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 更新AI请求信息
+
+    /**
+     * 更新AI请求信息
+     *
+     * @param context           上下文
+     * @param requestid         ai请求id
+     * @param newRequestcontent 请求内容
+     * @param newRequestresult  请求结果
+     */
     public static void updateAIRequest(Context context, int requestid, String newRequestcontent, String newRequestresult) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -602,7 +796,13 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 删除用户信息
+
+    /**
+     * 删除用户信息
+     *
+     * @param context 上下文
+     * @param userid  id
+     */
     public static void deleteUserInfo(Context context, int userid) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -614,7 +814,13 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 删除课程信息
+
+    /**
+     * 删除课程信息
+     *
+     * @param context 上下文
+     * @param classid id
+     */
     public static void deleteClassInfo(Context context, int classid) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -626,7 +832,13 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 删除错题本信息
+
+    /**
+     * 删除错题本信息
+     *
+     * @param context 上下文
+     * @param bookid  id
+     */
     public static void deleteErrorBook(Context context, int bookid) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -638,7 +850,13 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 删除请假信息
+
+    /**
+     * 删除请假信息
+     *
+     * @param context 上下文
+     * @param leaveid id
+     */
     public static void deleteLeaveInfo(Context context, int leaveid) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -650,7 +868,13 @@ public class DatabaseOperations {
         db.close();
     }
 
-    // 删除AI请求信息
+
+    /**
+     * 删除AI请求信息
+     *
+     * @param context   上下文
+     * @param requestid id
+     */
     public static void deleteAIRequest(Context context, int requestid) {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
