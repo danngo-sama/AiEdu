@@ -234,7 +234,7 @@ public class CloudDatabaseHelper {
      * });}
      * </pre>
      *
-     * @param userId 删除用户的id
+     * @param userId   删除用户的id
      * @param callback 回调
      */
     public void deleteUserInfoById(int userId, FirestoreDeleteCallback callback) {
@@ -256,5 +256,205 @@ public class CloudDatabaseHelper {
                 });
     }
 
+    /**
+     * Stores class information in Firestore.
+     *
+     * <p>Usage example:</p>
+     * <pre>{@code
+     * cloudDbHelper.insertClassInfo(courseId, teacherId, studentIds, courseName, courseDescription,
+     *     location, classAudio, classContent, classSummary, new FirestoreInsertCallback() {
+     *     @Override
+     *     public void onStoreSuccess() {
+     *         // Handle success
+     *     }
+     *     @Override
+     *     public void onStoreFailure(Exception e) {
+     *         // Handle failure
+     *     }
+     * });}
+     * </pre>
+     *
+     * @param courseId          The ID of the course.
+     * @param teacherId         The ID of the teacher.
+     * @param studentIds        A list of student IDs associated with the class.
+     * @param courseName        The name of the course.
+     * @param courseDescription A description of the course.
+     * @param location          The location of the class (e.g., a byte array representing a map or coordinates).
+     * @param classAudio        The audio recording of the class (e.g., a byte array of audio data).
+     * @param classContent      The content of the class (e.g., lecture notes).
+     * @param classSummary      A summary of the class.
+     * @param callback          A callback to handle the result of the operation.
+     * @see FirestoreInsertCallback
+     */
+    public void insertClassInfo(int courseId, int teacherId, List<Integer> studentIds, String courseName,
+                                String courseDescription, byte[] location, byte[] classAudio,
+                                String classContent, String classSummary, FirestoreInsertCallback callback) {
+        Map<String, Object> classInfo = new HashMap<>();
+        classInfo.put("courseId", courseId);
+        classInfo.put("teacherId", teacherId);
+        classInfo.put("studentIds", studentIds);
+        classInfo.put("courseName", courseName);
+        classInfo.put("courseDescription", courseDescription);
+        classInfo.put("location", location);
+        classInfo.put("classAudio", classAudio);
+        classInfo.put("classContent", classContent);
+        classInfo.put("classSummary", classSummary);
 
+        db.collection("classInfo")
+                .add(classInfo)
+                .addOnSuccessListener(documentReference -> callback.onStoreSuccess())
+                .addOnFailureListener(e -> callback.onStoreFailure(e));
+    }
+
+    /**
+     * Queries all class information from Firestore.
+     *
+     * <p>Usage example:</p>
+     * <pre>{@code
+     * cloudDbHelper.queryAllClassInfo(new FirestoreQueryCallback() {
+     *     @Override
+     *     public void onCallback(List<Map<String, Object>> classList) {
+     *         // Handle the retrieved class information
+     *     }
+     * });}
+     * </pre>
+     *
+     * @param callback A callback to handle the results of the query.
+     * @see FirestoreQueryCallback
+     */
+    public void queryAllClassInfo(FirestoreQueryCallback callback) {
+        db.collection("classInfo")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Map<String, Object>> classList = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            classList.add(document.getData());
+                        }
+                        callback.onCallback(classList);
+                    } else {
+                        Log.w("Firestore", "Error getting documents.", task.getException());
+                        callback.onCallback(new ArrayList<>()); // Return an empty list in case of error
+                    }
+                });
+    }
+
+    /**
+     * Queries class information by course ID from Firestore.
+     *
+     * <p>Usage example:</p>
+     * <pre>{@code
+     * cloudDbHelper.queryClassInfoById(courseId, new FirestoreQueryCallback() {
+     *     @Override
+     *     public void onCallback(List<Map<String, Object>> classList) {
+     *         // Handle the retrieved class information
+     *     }
+     * });}
+     * </pre>
+     *
+     * @param courseId The ID of the course to query.
+     * @param callback A callback to handle the results of the query.
+     * @see FirestoreQueryCallback
+     */
+    public void queryClassInfoById(int courseId, FirestoreQueryCallback callback) {
+        db.collection("classInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Map<String, Object>> classList = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            classList.add(document.getData());
+                        }
+                        callback.onCallback(classList);
+                    } else {
+                        Log.w("Firestore", "Error getting documents.", task.getException());
+                        callback.onCallback(new ArrayList<>()); // Return an empty list in case of error
+                    }
+                });
+    }
+
+    /**
+     * Updates class information in Firestore by course ID.
+     *
+     * <p>Usage example:</p>
+     * <pre>{@code
+     * Map<String, Object> updates = new HashMap<>();
+     * updates.put("courseName", "New Course Name");
+     * cloudDbHelper.updateClassInfo(courseId, updates, new FirestoreUpdateCallback() {
+     *     @Override
+     *     public void onUpdateSuccess() {
+     *         // Handle update success
+     *     }
+     *     @Override
+     *     public void onUpdateFailure(Exception e) {
+     *         // Handle update failure
+     *     }
+     * });}
+     * </pre>
+     *
+     * @param courseId The ID of the course to update.
+     * @param updates  A map containing the fields to update and their new values.
+     * @param callback A callback to handle the result of the update operation.
+     * @see FirestoreUpdateCallback
+     */
+    public void updateClassInfo(int courseId, Map<String, Object> updates, FirestoreUpdateCallback callback) {
+        db.collection("classInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("classInfo")
+                                .document(docId)
+                                .update(updates)
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "Class not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * Deletes class information from Firestore by course ID.
+     *
+     * <p>Usage example:</p>
+     * <pre>{@code
+     * cloudDbHelper.deleteClassInfoById(courseId, new FirestoreDeleteCallback() {
+     *     @Override
+     *     public void onDeleteSuccess() {
+     *         // Handle delete success
+     *     }
+     *     @Override
+     *     public void onDeleteFailure(Exception e) {
+     *         // Handle delete failure
+     *     }
+     * });}
+     * </pre>
+     *
+     * @param courseId The ID of the course to delete.
+     * @param callback A callback to handle the result of the delete operation.
+     * @see FirestoreDeleteCallback
+     */
+    public void deleteClassInfoById(int courseId, FirestoreDeleteCallback callback) {
+        db.collection("classInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("classInfo")
+                                .document(docId)
+                                .delete()
+                                .addOnSuccessListener(aVoid -> callback.onDeleteSuccess())
+                                .addOnFailureListener(e -> callback.onDeleteFailure(e));
+                    } else {
+                        Log.w("Firestore", "Class not found or error getting documents.", task.getException());
+                        callback.onDeleteFailure(task.getException());
+                    }
+                });
+    }
 }
+
