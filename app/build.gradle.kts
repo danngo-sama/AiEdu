@@ -38,6 +38,7 @@ dependencies {
 
     implementation("com.alibaba:fastjson:1.2.78")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation("androidx.fragment:fragment:1.4.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
