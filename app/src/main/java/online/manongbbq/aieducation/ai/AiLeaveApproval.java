@@ -77,7 +77,6 @@ public class AiLeaveApproval
                         }
                     }
                 }
-
                 @Override
                 public void onFailure(WebSocket webSocket, Throwable t, Response response)
                 {
