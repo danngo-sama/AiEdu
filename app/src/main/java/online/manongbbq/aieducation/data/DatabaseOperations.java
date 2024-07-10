@@ -1,9 +1,9 @@
 package online.manongbbq.aieducation.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.content.Context;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +43,10 @@ import java.util.List;
  * // 插入AI请求信息</p>
  * </li>
  * <li>
+ * <p>{@link #insertSchedule(Context, int, String, String, String)}</p>
+ * <p>// 插入日程信息。<strong>注意：此处时间使用{@link java.sql.Timestamp}</strong></p>
+ * </li>
+ * <li>
  * <p>{@link #queryUserInfo(Context)}</p>
  * <p>{@code DatabaseOperations.queryUserInfo(this);}
  * // 查询所有用户信息</p>
@@ -78,6 +82,10 @@ import java.util.List;
  * // 查询AI请求信息</p>
  * </li>
  * <li>
+ * <p>{@link #querySchedule(Context)}</p>
+ * <p>// 查询日程信息</p>
+ * </li>
+ * <li>
  * <p>{@link #updateUserInfo(Context, int, int, String, byte[], boolean)}</p>
  * <p>{@code DatabaseOperations.updateUserInfo(this, 1, 654321, "Jane Doe", null, false);}
  * // 更新用户信息</p>
@@ -102,6 +110,8 @@ import java.util.List;
  * <p>{@code }
  * // 更新AI请求信息</p>
  * </li>
+ * <li>{@link #updateSchedule(Context, int, String, String, String)}</li>
+ * <p>// 更新日程信息</p>
  * <li>
  * <p>{@link #deleteUserInfo(Context, int)}</p>
  * <p>{@code }
@@ -127,11 +137,13 @@ import java.util.List;
  * <p>{@code }
  * // 删除AI请求信息</p>
  * </li>
+ * <li><p>{@link #deleteSchedule(Context, int)}</p></li>
+ * <p>// 删除日程信息</p>
  * </ui>
  * </p>
  *
  * @author liang zifan
- * @version 0.0.2
+ * @version 0.1.2
  * @see MyDatabaseHelper
  * @since 07/08
  */
@@ -255,6 +267,31 @@ public class DatabaseOperations {
         values.put("requestresult", requestresult);
 
         db.insert("airequest", null, values);
+        db.close();
+    }
+
+
+    /**
+     * 插入日程信息
+     *
+     * @param context    上下文
+     * @param scheduleid 日程id
+     * @param starttime  开始时间
+     * @param endtime    结束时间
+     * @param task       内容
+     */
+    public static void insertSchedule(Context context, int scheduleid, String starttime,
+                                      String endtime, String task) {
+        MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("scheduleid", scheduleid);
+        values.put("starttime", starttime);
+        values.put("endtime", endtime);
+        values.put("task", task);
+
+        db.insert("schedule", null, values);
         db.close();
     }
 
@@ -670,6 +707,64 @@ public class DatabaseOperations {
 
 
     /**
+     * 查询日程信息。
+     * <p>
+     * 返回列表，其中每一项为一个JSON对象，JSON的name为
+     * <ui>
+     * <li>scheduleid
+     * <li>starttime
+     * <li>endtime
+     * <li>task
+     * </ui></p>
+     *
+     * @param context 上下文
+     * @return 包含所有日程信息的List
+     * @throws JSONException JSON错误
+     */
+    public static List<JSONObject> querySchedule(Context context) throws JSONException {
+        MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] projection = {
+                "scheduleid",
+                "starttime",
+                "endtime",
+                "task"
+        };
+
+        Cursor cursor = db.query(
+                "schedule",   // The table to query
+                projection,            // The array of columns to return (pass null to get all)
+                null,                  // The columns for the WHERE clause
+                null,                  // The values for the WHERE clause
+                null,                  // don't group the rows
+                null,                  // don't filter by row groups
+                null);                 // The sort order
+
+        List<JSONObject> data = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            int scheduleid = cursor.getInt(cursor.getColumnIndexOrThrow("scheduleid"));
+            String starttime = cursor.getString(cursor.getColumnIndexOrThrow("starttime"));
+            String endtime = cursor.getString(cursor.getColumnIndexOrThrow("endtime"));
+            String task = cursor.getString(cursor.getColumnIndexOrThrow("task"));
+
+            JSONObject obj = new JSONObject();
+            obj.put("scheduleid", scheduleid);
+            obj.put("starttime", starttime);
+            obj.put("endtime", endtime);
+            obj.put("task", task);
+
+            data.add(obj);
+        }
+        cursor.close();
+        db.close();
+
+        return data;
+    }
+
+
+    /**
      * 更新用户信息
      *
      * @param context      上下文
@@ -798,6 +893,33 @@ public class DatabaseOperations {
 
 
     /**
+     * 更新日程信息
+     *
+     * @param context      上下文
+     * @param scheduleid   日程id
+     * @param newStarttime 开始时间
+     * @param newEndtime   结束时间
+     * @param newTask      内容
+     */
+    public static void updateSchedule(Context context, int scheduleid, String newStarttime,
+                                      String newEndtime, String newTask) {
+        MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("starttime", newStarttime);
+        values.put("endtime", newEndtime);
+        values.put("task", newTask);
+
+        String selection = "scheduleid = ?";
+        String[] selectionArgs = {String.valueOf(scheduleid)};
+
+        db.update("schedule", values, selection, selectionArgs);
+        db.close();
+    }
+
+
+    /**
      * 删除用户信息
      *
      * @param context 上下文
@@ -883,6 +1005,24 @@ public class DatabaseOperations {
         String[] selectionArgs = {String.valueOf(requestid)};
 
         db.delete("airequest", selection, selectionArgs);
+        db.close();
+    }
+
+
+    /**
+     * 删除日程信息
+     *
+     * @param context    上下文
+     * @param scheduleid id
+     */
+    public static void deleteSchedule(Context context, int scheduleid) {
+        MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String selection = "scheduleid = ?";
+        String[] selectionArgs = {String.valueOf(scheduleid)};
+
+        db.delete("schedule", selection, selectionArgs);
         db.close();
     }
 }

@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -40,7 +42,13 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("androidx.fragment:fragment:1.4.0")
 
+    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-firestore")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+
 }
