@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * This is the class to help build a database.
  *
  * @author liang zifan
- * @version 0.0.1
+ * @version 0.1.1
  * @since 07/08
  */
 public class MyDatabaseHelper extends SQLiteOpenHelper {

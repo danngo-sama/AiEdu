@@ -2,6 +2,7 @@ package online.manongbbq.aieducation.data;
 
 import android.util.Log;
 
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -10,6 +11,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * data to cloud database.
+ * <p>
+ *     <p>数据至云数据库</p>
+ *     <ui>
+ *         <li>{@link #insertUserInfo(int, int, String, byte[], boolean, List, FirestoreInsertCallback)}
+ *         <li>{@link #insertClassInfo(int, int, List, String, String, byte[], byte[], String, String, FirestoreInsertCallback)}
+ *         <li>{@link #queryUserInfo(FirestoreQueryCallback)}
+ *         <li>{@link #queryUserInfo(int, FirestoreQueryCallback)}
+ *         <li>{@link #queryClassInfo(FirestoreQueryCallback)}
+ *         <li>{@link #queryUserInfo(int, FirestoreQueryCallback)}
+ *         <li>{@link #updateUserInfo(int, Map, FirestoreUpdateCallback)}
+ *         <li>{@link #updateClassInfo(int, Map, FirestoreUpdateCallback)}
+ *         <li>{@link #addClassToStudent(int, int, FirestoreUpdateCallback)}
+ *         <li>{@link #addStudentToClass(int, int, FirestoreUpdateCallback)}
+ *         <li>{@link #removeClassFromStudent(int, int, FirestoreUpdateCallback)}
+ *         <li>{@link #removeStudentFromClass(int, int, FirestoreUpdateCallback)}
+ *         <li>{@link #deleteUserInfoById(int, FirestoreDeleteCallback)}
+ *         <li>{@link #deleteClassInfoById(int, FirestoreDeleteCallback)}
+ *     </ui>
+ * </p>
+ *
+ * @author liang zifan
+ * @version 0.1.1
+ * @since 07/09
+ * @see FirestoreQueryCallback
+ * @see FirestoreInsertCallback
+ * @see FirestoreUpdateCallback
+ * @see FirestoreDeleteCallback
+ * @see FirebaseFirestore
+ */
 public class CloudDatabaseHelper {
 
     private FirebaseFirestore db;
@@ -214,6 +246,60 @@ public class CloudDatabaseHelper {
 
 
     /**
+     * 更新userId中的classIds列表，向列表中加入
+     *
+     * @param userId     用户id
+     * @param newClassId 加入的班级id
+     * @param callback   回调
+     * @see FirestoreUpdateCallback
+     */
+    public void addClassToStudent(int userId, int newClassId, FirestoreUpdateCallback callback) {
+        db.collection("userInfo")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("userInfo")
+                                .document(docId)
+                                .update("classIds", FieldValue.arrayUnion(newClassId))
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "User not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * 更新userId中的classIds列表(删除条目)
+     *
+     * @param userId          用户id
+     * @param classIdToRemove 删除的课程id
+     * @param callback        回调
+     * @see FirestoreDeleteCallback
+     */
+    public void removeClassFromStudent(int userId, int classIdToRemove, FirestoreUpdateCallback callback) {
+        db.collection("userinfo")
+                .whereEqualTo("userid", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String documentId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("userinfo").document(documentId)
+                                .update("classIds", FieldValue.arrayRemove(classIdToRemove))
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "User not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
+
+    /**
      * 删除用户信息
      * <p>以下为一个使用样例</p>
      * <pre>for example:
@@ -276,13 +362,13 @@ public class CloudDatabaseHelper {
      *
      * @param courseId          The ID of the course.
      * @param teacherId         The ID of the teacher.
-     * @param studentIds        A list of student IDs associated with the class.
+     * @param studentIds        A list of student IDs associated with the class.学生列表
      * @param courseName        The name of the course.
-     * @param courseDescription A description of the course.
-     * @param location          The location of the class (e.g., a byte array representing a map or coordinates).
-     * @param classAudio        The audio recording of the class (e.g., a byte array of audio data).
-     * @param classContent      The content of the class (e.g., lecture notes).
-     * @param classSummary      A summary of the class.
+     * @param courseDescription A description of the course.课堂描述
+     * @param location          The location of the class (a byte array representing a map or coordinates).地理位置
+     * @param classAudio        The audio recording of the class (a byte array of audio data).音频
+     * @param classContent      The content of the class (lecture notes).内容
+     * @param classSummary      A summary of the class.总结
      * @param callback          A callback to handle the result of the operation.
      * @see FirestoreInsertCallback
      */
@@ -311,7 +397,7 @@ public class CloudDatabaseHelper {
      *
      * <p>Usage example:</p>
      * <pre>{@code
-     * cloudDbHelper.queryAllClassInfo(new FirestoreQueryCallback() {
+     * cloudDbHelper.queryClassInfo(new FirestoreQueryCallback() {
      *     @Override
      *     public void onCallback(List<Map<String, Object>> classList) {
      *         // Handle the retrieved class information
@@ -322,7 +408,7 @@ public class CloudDatabaseHelper {
      * @param callback A callback to handle the results of the query.
      * @see FirestoreQueryCallback
      */
-    public void queryAllClassInfo(FirestoreQueryCallback callback) {
+    public void queryClassInfo(FirestoreQueryCallback callback) {
         db.collection("classInfo")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -344,7 +430,7 @@ public class CloudDatabaseHelper {
      *
      * <p>Usage example:</p>
      * <pre>{@code
-     * cloudDbHelper.queryClassInfoById(courseId, new FirestoreQueryCallback() {
+     * cloudDbHelper.queryClassInfo(courseId, new FirestoreQueryCallback() {
      *     @Override
      *     public void onCallback(List<Map<String, Object>> classList) {
      *         // Handle the retrieved class information
@@ -356,7 +442,7 @@ public class CloudDatabaseHelper {
      * @param callback A callback to handle the results of the query.
      * @see FirestoreQueryCallback
      */
-    public void queryClassInfoById(int courseId, FirestoreQueryCallback callback) {
+    public void queryClassInfo(int courseId, FirestoreQueryCallback callback) {
         db.collection("classInfo")
                 .whereEqualTo("courseId", courseId)
                 .get()
@@ -408,6 +494,88 @@ public class CloudDatabaseHelper {
                         db.collection("classInfo")
                                 .document(docId)
                                 .update(updates)
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "Class not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * Updates the studentIds list in a classInfo document by adding a new student ID.
+     *
+     * <p>Usage example:</p>
+     * <pre>{@code
+     * cloudDbHelper.addStudentToClass(courseId, newStudentId, new FirestoreUpdateCallback() {
+     *     @Override
+     *     public void onUpdateSuccess() {
+     *         // Handle success
+     *     }
+     *     @Override
+     *     public void onUpdateFailure(Exception e) {
+     *         // Handle failure
+     *     }
+     * });}
+     * </pre>
+     *
+     * @param courseId     The ID of the course.
+     * @param newStudentId The ID of the student to add.
+     * @param callback     A callback to handle the result of the operation.
+     * @see FirestoreUpdateCallback
+     */
+    public void addStudentToClass(int courseId, int newStudentId, FirestoreUpdateCallback callback) {
+        db.collection("classInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("classInfo")
+                                .document(docId)
+                                .update("studentIds", FieldValue.arrayUnion(newStudentId))
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "Class not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * Updates the studentIds list in a classInfo document by removing a student ID.
+     *
+     * <p>Usage example:</p>
+     * <pre>{@code
+     * cloudDbHelper.removeStudentFromClass(courseId, studentIdToRemove, new FirestoreUpdateCallback() {
+     *     @Override
+     *     public void onUpdateSuccess() {
+     *         // Handle success
+     *     }
+     *     @Override
+     *     public void onUpdateFailure(Exception e) {
+     *         // Handle failure
+     *     }
+     * });}
+     * </pre>
+     *
+     * @param courseId        The ID of the course.
+     * @param studentIdToRemove The ID of the student to remove.
+     * @param callback        A callback to handle the result of the operation.
+     * @see FirestoreUpdateCallback
+     */
+    public void removeStudentFromClass(int courseId, int studentIdToRemove, FirestoreUpdateCallback callback) {
+        db.collection("classInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("classInfo")
+                                .document(docId)
+                                .update("studentIds", FieldValue.arrayRemove(studentIdToRemove))
                                 .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
                                 .addOnFailureListener(e -> callback.onUpdateFailure(e));
                     } else {
