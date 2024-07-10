@@ -1,4 +1,4 @@
-package online.manongbbq.aieducation.Activity;
+package online.manongbbq.aieducation.activity;
 
 import android.content.Intent;
 import android.os.Bundle;

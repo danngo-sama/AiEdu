@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Fragment.ScheduleFragment">
+    tools:context=".fragment.ScheduleFragment">
 
     <TextView
         android:id="@+id/textViewDate"

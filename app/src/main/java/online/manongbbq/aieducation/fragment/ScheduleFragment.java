@@ -1,4 +1,4 @@
-package online.manongbbq.aieducation.Fragment;
+package online.manongbbq.aieducation.fragment;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;

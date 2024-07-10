@@ -1,12 +1,12 @@
-package online.manongbbq.aieducation.Activity;
+package online.manongbbq.aieducation.activity;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import online.manongbbq.aieducation.Fragment.HomeFragment;
-import online.manongbbq.aieducation.Fragment.MineFragment;
-import online.manongbbq.aieducation.Fragment.ScheduleFragment;
+import online.manongbbq.aieducation.fragment.HomeFragment;
+import online.manongbbq.aieducation.fragment.MineFragment;
+import online.manongbbq.aieducation.fragment.ScheduleFragment;
 import online.manongbbq.aieducation.R;
 
 import android.view.MenuItem;

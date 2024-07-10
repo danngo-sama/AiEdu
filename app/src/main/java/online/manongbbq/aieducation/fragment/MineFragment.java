@@ -1,4 +1,4 @@
-package online.manongbbq.aieducation.Fragment;
+package online.manongbbq.aieducation.fragment;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
