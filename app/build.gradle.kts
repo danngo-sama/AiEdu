@@ -1,8 +1,10 @@
 plugins {
-    alias(libs.plugins.androidApplication)
+    id("com.android.application") version "8.4.0"
 
     id("com.google.gms.google-services")
 }
+
+
 
 android {
     namespace = "online.manongbbq.aieducation"
@@ -31,6 +33,8 @@ android {
 }
 
 dependencies {
+
+
 
     implementation(libs.appcompat)
     implementation(libs.material)

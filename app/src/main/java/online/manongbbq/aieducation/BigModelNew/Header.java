@@ -1,12 +1,12 @@
 package online.manongbbq.aieducation.BigModelNew;
 
-public class BigModelNew$Text {
-    String role;
-    String content;
-
+public class Header {
+    int code;
+    int status;
+    String sid;
     BigModelNew this$0;
 
-    BigModelNew$Text(BigModelNew var1){
+    Header(BigModelNew var1){
         this.this$0 = var1;
     }
 }

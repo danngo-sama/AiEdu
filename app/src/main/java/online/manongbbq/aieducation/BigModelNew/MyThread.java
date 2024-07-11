@@ -6,13 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.Iterator;
 import java.util.UUID;
 import okhttp3.WebSocket;
+import online.manongbbq.aieducation.BigModelNew.RoleContent;
 
-public class BigModelNew$MyThread extends Thread {
+public class MyThread extends Thread {
     private WebSocket webSocket;
 
     BigModelNew this$0;
 
-    public BigModelNew$MyThread(BigModelNew var1, WebSocket webSocket){
+    public MyThread(BigModelNew var1, WebSocket webSocket){
         this.this$0 = var1;
         this.webSocket = webSocket;
     }
@@ -32,16 +33,16 @@ public class BigModelNew$MyThread extends Thread {
             JSONObject payload = new JSONObject();
             JSONObject message = new JSONObject();
             JSONArray text = new JSONArray();
-            BigModelNew.RoleContent tempRoleContent;
+            RoleContent tempRoleContent;
             if(BigModelNew.historyList.size() > 0){
                 Iterator var9 = BigModelNew.historyList.iterator();
                 while (var9.hasNext()){
-                    tempRoleContent = (BigModelNew.RoleContent)var9.next();
+                    tempRoleContent = (RoleContent)var9.next();
                     text.add(JSON.toJSON(tempRoleContent));
                 }
             }
-            tempRoleContent = new BigModelNew.RoleContent(this.this$0);
-            tempRoleContent.role = 'user';
+            tempRoleContent = new RoleContent(this.this$0);
+            tempRoleContent.role = "user";
             tempRoleContent.content = BigModelNew.NewQuestion;
             text.add(JSON.toJSON(tempRoleContent));
             BigModelNew.historyList.add(tempRoleContent);

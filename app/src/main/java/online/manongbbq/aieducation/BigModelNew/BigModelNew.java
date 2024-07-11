@@ -23,6 +23,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import online.manongbbq.aieducation.BigModelNew.RoleContent;
 
 public class BigModelNew extends WebSocketListener {
     public static final String hostUrl = "https://spark-api.xf-yun.com/v2.1/chat";

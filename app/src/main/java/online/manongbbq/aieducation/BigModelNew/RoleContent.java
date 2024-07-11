@@ -1,11 +1,11 @@
 package online.manongbbq.aieducation.BigModelNew;
 
-public class BigModelNew$RoleContent {
+public class RoleContent {
     String role;
     String content;
     BigModelNew this$0;
 
-    BigModelNew$RoleContent(BigModelNew var1){
+    RoleContent(BigModelNew var1){
 
         this.this$0 = var1;
     }
