@@ -1,6 +1,9 @@
 package online.manongbbq.aieducation.BigModelNew;
 // Source code is decompiled from a .class file using FernFlower decompiler.
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.URL;
@@ -15,6 +18,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.TimeZone;
+import java.util.UUID;
+import java.util.Base64;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import okhttp3.HttpUrl;
@@ -23,7 +29,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import online.manongbbq.aieducation.BigModelNew.RoleContent;
 
 public class BigModelNew extends WebSocketListener {
     public static final String hostUrl = "https://spark-api.xf-yun.com/v2.1/chat";
@@ -37,6 +42,140 @@ public class BigModelNew extends WebSocketListener {
     private String userId;
     private Boolean wsCloseFlag;
     private static Boolean totalFlag = true;
+
+    public class Choices{
+        List<BigModelNew.Text> text;
+
+        BigModelNew this$0;
+
+        Choices(BigModelNew var1){
+            this.this$0 = var1;
+        }
+    }
+
+    public class Header{
+        int code;
+        int status;
+        String sid;
+        BigModelNew this$0;
+
+        Header(BigModelNew var1){
+            this.this$0 = var1;
+        }
+    }
+
+    public class JsonParse{
+        BigModelNew.Header header;
+        BigModelNew.PayLoad payload;
+        BigModelNew this$0;
+
+        public JsonParse(BigModelNew var1){
+            this.this$0 = var1;
+        }
+    }
+
+    public class MyThread{
+        private WebSocket webSocket;
+
+        BigModelNew this$0;
+
+        public MyThread(BigModelNew var1, WebSocket webSocket){
+            super();
+            this.this$0 = var1;
+            this.webSocket = webSocket;
+        }
+
+        @Override
+        public  void run(){
+            try {
+                JSONObject requestJson = new JSONObject();
+                JSONObject header = new JSONObject();
+                header.put("app_id", "");
+                header.put("uid", UUID.randomUUID().toString().substring(0, 10));
+                JSONObject parameter = new JSONObject();
+                JSONObject chat = new JSONObject();
+                chat.put("domain", "generalv2");
+                chat.put("temperature", 0.5);
+                chat.put("max_tokens", 4096);
+                parameter.put("chat", chat);
+                JSONObject payload = new JSONObject();
+                JSONObject message = new JSONObject();
+                JSONArray text = new JSONArray();
+                RoleContent tempRoleContent;
+                if(BigModelNew.historyList.size() > 0){
+                    Iterator var9 = BigModelNew.historyList.iterator();
+                    while(var9.hasNext()){
+                        tempRoleContent = (RoleContent)var9.next();
+                        text.add(JSON.toJSON(tempRoleContent));
+                    }
+                }
+                tempRoleContent = new RoleContent(this.this$0);
+                tempRoleContent.role = "user";
+                tempRoleContent.content = BigModelNew.NewQuestion;
+                text.add(JSON.toJSON(tempRoleContent));
+                BigModelNew.historyList.add(tempRoleContent);
+                message.put("text", text);
+                payload.put("message", message);
+                requestJson.put("header", header);
+                requestJson.put("parameter", parameter);
+                requestJson.put("payload", payload);
+                this.webSocket.send(requestJson.toString());
+
+                do {
+                    Thread.sleep(200L);
+                }while(!this.this$0.wsCloseFlag);
+
+                this.webSocket.close(1000,"");
+            }catch (Exception var10){
+                var10.printStackTrace();
+            }
+        }
+    }
+
+    public class PayLoad{
+        BigModelNew.Choices choices;
+        BigModelNew this$0;
+
+        PayLoad(BigModelNew var1){
+            this.this$0 = var1;
+        }
+    }
+
+    public class RoleContent{
+        String role;
+        String content;
+        BigModelNew this$0;
+
+        RoleContent(BigModelNew var1){
+            this.this$0 = var1;
+        }
+
+        public String getContent(){
+            return this.content;
+        }
+
+        public String getRole(){
+            return this.role;
+        }
+
+        public void setRole(String role){
+            this.role = role;
+        }
+
+        public void setContent(String content){
+            this.content = content;
+        }
+    }
+
+    public class Text{
+        String role;
+        String content;
+        BigModelNew this$0;
+
+        Text(BigModelNew var1){
+            this.this$0 = var1;
+        }
+    }
 
     public BigModelNew(String userId, Boolean wsCloseFlag) {
         this.userId = userId;
@@ -89,7 +228,8 @@ public class BigModelNew extends WebSocketListener {
         super.onOpen(webSocket, response);
         System.out.print("\u6fb6\u0444\u0101\ufffd\ufffd\u951b\ufffd");
         MyThread myThread = new MyThread(this, webSocket);
-        myThread.start();
+        Thread thread = new Thread(myThread);
+        thread.start();
     }
 
     public void onMessage(WebSocket webSocket, String text) {
