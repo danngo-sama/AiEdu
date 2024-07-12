@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import online.manongbbq.aieducation.R;
+import online.manongbbq.aieducation.ai.RobotAssistant;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -52,6 +53,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private String getAnswer(String question) {
         // Placeholder for the actual AI answer fetching logic
-        return "这是AI的回答";
+        String answer1= new RobotAssistant().getAnswer(question);
+        return answer1;
     }
 }
