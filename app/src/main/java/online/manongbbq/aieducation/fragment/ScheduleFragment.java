@@ -1,6 +1,5 @@
 package online.manongbbq.aieducation.fragment;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +28,8 @@ public class ScheduleFragment extends Fragment {
 
     private CalendarView calendarView;
     private TextView textViewDate, textViewEvents;
-    private Button buttonSelectYear, buttonAddEvent;
+    private EditText editTextEvent;
+    private Button buttonAddEvent;
     private Calendar selectedDate = Calendar.getInstance(Locale.CHINA);
     private List<String> events = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
@@ -50,7 +51,7 @@ public class ScheduleFragment extends Fragment {
         calendarView = view.findViewById(R.id.calendarView);
         textViewDate = view.findViewById(R.id.textViewDate);
         textViewEvents = view.findViewById(R.id.textViewEvents);
-        buttonSelectYear = view.findViewById(R.id.buttonSelectYear);
+        editTextEvent = view.findViewById(R.id.editTextEvent);
         buttonAddEvent = view.findViewById(R.id.buttonAddEvent);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日, EEEE", Locale.CHINA);
@@ -61,7 +62,6 @@ public class ScheduleFragment extends Fragment {
             textViewDate.setText(sdf.format(selectedDate.getTime()));
         });
 
-        buttonSelectYear.setOnClickListener(v -> showYearPickerDialog());
         buttonAddEvent.setOnClickListener(v -> addEvent());
 
         // Initialize and start the handler to update the date display every second
@@ -75,23 +75,17 @@ public class ScheduleFragment extends Fragment {
         handler.post(runnable);
     }
 
-    private void showYearPickerDialog() {
-        int year = selectedDate.get(Calendar.YEAR);
-        DatePickerDialog yearPickerDialog = new DatePickerDialog(getContext(), (view, year1, month, dayOfMonth) -> {
-            selectedDate.set(Calendar.YEAR, year1);
-            textViewDate.setText(new SimpleDateFormat("yyyy年MM月dd日, EEEE", Locale.CHINA).format(selectedDate.getTime()));
-            calendarView.setDate(selectedDate.getTimeInMillis());
-        }, year, selectedDate.get(Calendar.MONTH), selectedDate.get(Calendar.DAY_OF_MONTH));
-        yearPickerDialog.getDatePicker().findViewById(getResources().getIdentifier("day", "id", "android")).setVisibility(View.GONE);
-        yearPickerDialog.getDatePicker().findViewById(getResources().getIdentifier("month", "id", "android")).setVisibility(View.GONE);
-        yearPickerDialog.show();
-    }
-
     private void addEvent() {
+        String eventText = editTextEvent.getText().toString().trim();
+        if (eventText.isEmpty()) {
+            Toast.makeText(getContext(), "请输入事件内容", Toast.LENGTH_SHORT).show();
+            return;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日, EEEE", Locale.CHINA);
-        String event = "日程: " + sdf.format(selectedDate.getTime());
+        String event = sdf.format(selectedDate.getTime()) + ": " + eventText;
         events.add(event);
         updateEventsDisplay();
+        editTextEvent.setText("");
         Toast.makeText(getContext(), "添加日程: " + event, Toast.LENGTH_SHORT).show();
     }
 

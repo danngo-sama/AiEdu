@@ -85,7 +85,7 @@ public class BigModelNew extends WebSocketListener {
             this.webSocket = webSocket;
         }
 
-        @Override
+
         public  void run(){
             try {
                 JSONObject requestJson = new JSONObject();

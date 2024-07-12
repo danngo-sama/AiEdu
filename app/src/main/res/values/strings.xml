@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">AI Education</string>
     <string name="underlined_text"><u>点击注册</u></string>
+    <string name="my_course">我的课堂</string>
+    <string name="voice_to_text">课堂语音转文字\n</string>
+    <string name="attendance">签到</string>
+    <string name="leave">请假</string>
+
 </resources>

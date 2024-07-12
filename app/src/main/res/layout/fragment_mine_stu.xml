@@ -1,12 +1,69 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_green_light">
+    android:orientation="vertical"
+    android:background="@drawable/bg1"
+    android:padding="16dp">
 
-    <!-- 你的布局内容 -->
     <TextView
+        android:id="@+id/textViewName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mine Fragment"
-        android:layout_gravity="center"/>
-</FrameLayout>
+        android:textSize="18sp"
+        android:text="姓名: "
+        android:padding="8dp" />
+
+    <TextView
+        android:id="@+id/textViewStudentID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="学工号: "
+        android:padding="8dp" />
+
+    <Button
+        android:id="@+id/buttonMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="消息"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
+
+    <Button
+        android:id="@+id/buttonFaceInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="人脸信息"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
+
+    <Button
+        android:id="@+id/buttonVersionInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="版本信息"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
+
+    <Button
+        android:id="@+id/buttonAbout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="关于"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
+
+</LinearLayout>

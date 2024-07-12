@@ -6,13 +6,14 @@ plugins {
 
 
 
+
 android {
     namespace = "online.manongbbq.aieducation"
     compileSdk = 34
 
     defaultConfig {
         applicationId = "online.manongbbq.aieducation"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

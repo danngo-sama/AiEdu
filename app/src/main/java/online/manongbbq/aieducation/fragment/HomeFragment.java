@@ -1,5 +1,6 @@
 package online.manongbbq.aieducation.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
@@ -8,8 +9,11 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import online.manongbbq.aieducation.activity.ChatActivity;
+import online.manongbbq.aieducation.activity.CourseActivity;
 import online.manongbbq.aieducation.R;
 
 import java.text.SimpleDateFormat;
@@ -31,6 +35,19 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home_stu, container, false);
 
         textViewDateTime = view.findViewById(R.id.textViewDateTime);
+        ImageView imageView = view.findViewById(R.id.imageView5);
+        ImageView imageView2 = view.findViewById(R.id.imageView3);
+
+
+        imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ChatActivity.class);
+            startActivity(intent);
+        });
+
+        imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CourseActivity.class);
+            startActivity(intent);
+        });
 
         runnable = new Runnable() {
             @Override
