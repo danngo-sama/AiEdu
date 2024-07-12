@@ -36,7 +36,7 @@ public class HomeFragment extends Fragment {
 
         textViewDateTime = view.findViewById(R.id.textViewDateTime);
         ImageView imageView = view.findViewById(R.id.imageView5);
-        ImageView imageView2 = view.findViewById(R.id.imageView3);
+//        ImageView imageView2 = view.findViewById(R.id.imageView3);
 
 
         imageView.setOnClickListener(v -> {
@@ -44,10 +44,10 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-        imageView.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CourseActivity.class);
-            startActivity(intent);
-        });
+//        imageView.setOnClickListener(v -> {
+//            Intent intent = new Intent(getActivity(), CourseActivity.class);
+//            startActivity(intent);
+//        });
 
         runnable = new Runnable() {
             @Override
