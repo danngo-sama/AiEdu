@@ -74,9 +74,8 @@ public class BigModelNew extends WebSocketListener {
         }
     }
 
-    public class MyThread{
+    public class MyThread implements  Runnable{
         private WebSocket webSocket;
-
         BigModelNew this$0;
 
         public MyThread(BigModelNew var1, WebSocket webSocket){
@@ -85,7 +84,7 @@ public class BigModelNew extends WebSocketListener {
             this.webSocket = webSocket;
         }
 
-
+        @Override
         public  void run(){
             try {
                 JSONObject requestJson = new JSONObject();
