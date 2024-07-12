@@ -6,6 +6,8 @@ import okhttp3.*;
 import online.manongbbq.aieducation.BigModelNew.BigModelNew;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class RobotAssistant {
     private static final String API_URL = "https://spark-api.xf-yun.com/v2.1/chat";
@@ -14,6 +16,9 @@ public class RobotAssistant {
     private static final String API_KEY = "195606ee6f8cc7b485c37a59d7d6d65e"; // apiKey
 
     public String getAnswer(String question) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final String[] answer = {""};
+
         try {
             String authUrl = BigModelNew.getAuthUrl(API_URL, API_KEY, API_SECRET);
             OkHttpClient client = new OkHttpClient.Builder().build();
@@ -60,23 +65,26 @@ public class RobotAssistant {
                         totalAnswer.append(temp.getString("content"));
                     }
 
+                    answer[0] = totalAnswer.toString();
+
                     if (jsonResponse.getJSONObject("header").getInteger("status") == 2) {
                         webSocket.close(1000, "");
-                        // 返回回答结果
+                        latch.countDown();
                     }
                 }
 
                 @Override
                 public void onFailure(WebSocket webSocket, Throwable t, Response response) {
                     t.printStackTrace();
+                    latch.countDown();
                 }
             });
 
-            return ""; // 根据具体逻辑返回回答结果
+            latch.await(30, TimeUnit.SECONDS); // 等待响应最多30秒
+            return answer[0]; // 返回回答结果
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 }
-

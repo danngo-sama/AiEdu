@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import okhttp3.*;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import online.manongbbq.aieducation.BigModelNew.BigModelNew;
 
 public class AiSummary
@@ -18,6 +20,8 @@ public class AiSummary
     {
         try
         {
+            CompletableFuture<String> resultFuture = new CompletableFuture<>();
+
             String authUrl = BigModelNew.getAuthUrl(API_URL, API_KEY, API_SECRET);
             OkHttpClient client = new OkHttpClient.Builder().build();
             String url = authUrl.replace("http://", "ws://").replace("https://", "wss://");
@@ -70,7 +74,7 @@ public class AiSummary
                     if (jsonResponse.getJSONObject("header").getInteger("status") == 2)
                     {
                         webSocket.close(1000, "");
-                        // 返回总结结果
+                        resultFuture.complete(totalAnswer.toString()); // 返回总结结果
                     }
                 }
 
@@ -78,10 +82,11 @@ public class AiSummary
                 public void onFailure(WebSocket webSocket, Throwable t, Response response)
                 {
                     t.printStackTrace();
+                    resultFuture.completeExceptionally(t);
                 }
             });
 
-            return ""; // 根据具体逻辑返回总结结果
+            return resultFuture.get(30, TimeUnit.SECONDS); // 根据具体逻辑返回总结结果
         }
         catch (Exception e)
         {
