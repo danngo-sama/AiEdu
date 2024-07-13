@@ -5,10 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import online.manongbbq.aieducation.R;
 
-public class AttendanceActivity extends AppCompatActivity {
+public class AttendanceActivityStu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_attendance);
+        setContentView(R.layout.activity_attendance_stu);
     }
 }

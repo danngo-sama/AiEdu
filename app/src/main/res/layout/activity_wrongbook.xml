@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@drawable/bg4"
+    android:layout_height="match_parent">
+
+    <!-- 返回按钮 -->
+    <ImageButton
+        android:id="@+id/button_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="返回"
+        android:padding="12dp"
+        android:src="@drawable/ic_arrow_back" />
+
+    <!-- AI分析按钮 -->
+    <ImageButton
+        android:id="@+id/button_ai_analyze"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="AI分析"
+        android:padding="12dp"
+        android:src="@drawable/ic_ai_analyze" />
+
+    <!-- 错题本标题 -->
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="错题本"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- 上传错题按钮 -->
+    <Button
+        android:id="@+id/button_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="上传错题" />
+
+    <!-- 错题列表 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_upload"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:id="@+id/mistakes_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 动态添加错题照片的容器 -->
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

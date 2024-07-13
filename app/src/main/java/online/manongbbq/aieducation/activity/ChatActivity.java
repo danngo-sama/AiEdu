@@ -1,6 +1,7 @@
 package online.manongbbq.aieducation.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -16,7 +17,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private LinearLayout chatLayout;
     private EditText editTextQuestion;
-    private Button buttonSend;
+    private Button buttonSend,buttonBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +27,10 @@ public class ChatActivity extends AppCompatActivity {
         chatLayout = findViewById(R.id.chatLayout);
         editTextQuestion = findViewById(R.id.editTextQuestion);
         buttonSend = findViewById(R.id.buttonSend);
+        buttonBack = findViewById(R.id.buttonBack);
 
         buttonSend.setOnClickListener(v -> sendQuestion());
+        buttonBack.setOnClickListener(v -> finish());
     }
 
     private void sendQuestion() {
@@ -52,8 +55,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private String getAnswer(String question) {
+        Log.d("MyTag", "chat函数已经被调用！");
         // Placeholder for the actual AI answer fetching logic
         String answer1= new RobotAssistant().getAnswer(question);
+        System.out.print(answer1);
+        Log.d("MyTag", "返回内容是"+answer1);
         return answer1;
     }
 }

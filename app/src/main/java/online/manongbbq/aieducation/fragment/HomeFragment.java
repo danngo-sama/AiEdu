@@ -13,8 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import online.manongbbq.aieducation.activity.ChatActivity;
-import online.manongbbq.aieducation.activity.CourseActivity;
+import online.manongbbq.aieducation.activity.CourseActivityStu;
 import online.manongbbq.aieducation.R;
+import online.manongbbq.aieducation.activity.ReportActivityStu;
+import online.manongbbq.aieducation.activity.WrongBookActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,19 +37,32 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home_stu, container, false);
 
         textViewDateTime = view.findViewById(R.id.textViewDateTime);
-        ImageView imageView = view.findViewById(R.id.imageView5);
-//        ImageView imageView2 = view.findViewById(R.id.imageView3);
+        ImageView imageView3 = view.findViewById(R.id.imageView3);
+        ImageView imageView4 = view.findViewById(R.id.imageView4);
+        ImageView imageView5 = view.findViewById(R.id.imageView5);
+        ImageView imageView6 = view.findViewById(R.id.imageView6);
 
+        imageView3.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CourseActivityStu.class);
+            startActivity(intent);
+        });
 
-        imageView.setOnClickListener(v -> {
+        imageView4.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), WrongBookActivity.class);
+            startActivity(intent);
+        });
+
+        imageView5.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ChatActivity.class);
             startActivity(intent);
         });
 
-//        imageView.setOnClickListener(v -> {
-//            Intent intent = new Intent(getActivity(), CourseActivity.class);
-//            startActivity(intent);
-//        });
+        imageView6.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ReportActivityStu.class);
+            startActivity(intent);
+        });
+
+
 
         runnable = new Runnable() {
             @Override
