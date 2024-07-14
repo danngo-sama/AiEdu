@@ -31,10 +31,9 @@ public class LoginHelper {
                 }
 
                 Map<String, Object> user = userList.get(0);
-                int storedPassword = (int) user.get("password");
+                Long storedPassword = (Long) user.get("password");
 
-                if (storedPassword == password) {
-                    saveUserCredentials(userId, password);
+                if (storedPassword != null && storedPassword == password) {
                     callback.onLoginResult(true);
                 } else {
                     Log.d("LoginHelper", "Password mismatch");
