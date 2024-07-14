@@ -20,5 +20,9 @@ public interface FirestoreInsertCallback {
      * @param e 掷出的错误
      */
     void onStoreFailure(Exception e);
+
+    void onSuccess();
+
+    void onFailure(Exception e);
 }
 

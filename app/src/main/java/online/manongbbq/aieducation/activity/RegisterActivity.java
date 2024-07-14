@@ -1,12 +1,14 @@
 package online.manongbbq.aieducation.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +20,8 @@ import online.manongbbq.aieducation.data.FirestoreInsertCallback;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText editTextUserId, editTextName, editTextPassword, editTextConfirmPassword;
-    private Switch switchIsTeacher;
-    private Button buttonRegister;
+    private SwitchMaterial switchIsTeacher;
+    private Button buttonRegister,buttongo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,13 @@ public class RegisterActivity extends AppCompatActivity {
         editTextConfirmPassword = findViewById(R.id.edit_text4);
         switchIsTeacher = findViewById(R.id.switch1);
         buttonRegister = findViewById(R.id.button);
+        buttongo = findViewById(R.id.button2);
+
+        buttongo.setOnClickListener(v -> {
+            // Replace AttendanceActivity.class with the actual activity class
+            Intent intent = new Intent(RegisterActivity.this, HomepageStuActivity.class);
+            startActivity(intent);
+        });
 
         buttonRegister.setOnClickListener(v -> {
             String userIdStr = editTextUserId.getText().toString().trim();
@@ -52,6 +61,16 @@ public class RegisterActivity extends AppCompatActivity {
                     List<Integer> classIds = new ArrayList<>(); // Placeholder for class IDs
 
                     insertUserInfo(userId, password, name, faceData, isStudent, classIds, new FirestoreInsertCallback() {
+                        @Override
+                        public void onStoreSuccess() {
+
+                        }
+
+                        @Override
+                        public void onStoreFailure(Exception e) {
+
+                        }
+
                         @Override
                         public void onSuccess() {
                             Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
@@ -76,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
         // 这里仅作示例
         try {
             CloudDatabaseHelper co = new CloudDatabaseHelper();
-            co.insertUserInfo(userId,password,name,faceData,isStudent,classIds, (online.manongbbq.aieducation.data.FirestoreInsertCallback) callback);
+            co.insertUserInfo(userId, password, name, faceData, isStudent, classIds, callback);
             // 假设插入成功
             callback.onSuccess();
         } catch (Exception e) {
@@ -85,8 +104,5 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // 回调接口
-    public interface FirestoreInsertCallback {
-        void onSuccess();
-        void onFailure(Exception e);
-    }
+
 }

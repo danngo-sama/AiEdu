@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("MyTag", "跳转函数已经被调用！");
+
         textViewButton = findViewById(R.id.textView5);
         textViewButton.setOnClickListener(v -> {
 
