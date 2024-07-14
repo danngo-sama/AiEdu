@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts("default", file("SparkChain.arr"))

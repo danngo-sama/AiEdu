@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "AI Education"
 include(":app")
+include(":LocalRepo:SparkChain")
  

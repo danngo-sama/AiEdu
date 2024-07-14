@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 import online.manongbbq.aieducation.BigModelNew.BigModelNew;
 
 public class AiLeaveApproval {
-    private static final String API_URL = "https://spark-api.xf-yun.com/v2.1/chat";
+    private static final String API_URL = "https://spark-api.xf-yun.com/v3.5/chat";
     private static final String APP_ID = "c72c8624"; // appid
     private static final String API_SECRET = "YWVmODZlNTAxOTY0OWUwZDEzYjk0OGQw"; // apiSecret
     private static final String API_KEY = "195606ee6f8cc7b485c37a59d7d6d65e"; // apiKey
@@ -34,7 +34,7 @@ public class AiLeaveApproval {
 
                     JSONObject parameter = new JSONObject();
                     JSONObject chat = new JSONObject();
-                    chat.put("domain", "generalv2");
+                    chat.put("domain", "generalv3.5");
                     chat.put("temperature", 0.5);
                     chat.put("max_tokens", 4096);
                     parameter.put("chat", chat);

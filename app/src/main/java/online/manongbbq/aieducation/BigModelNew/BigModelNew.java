@@ -31,10 +31,10 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class BigModelNew extends WebSocketListener {
-    public static final String hostUrl = "https://spark-api.xf-yun.com/v2.1/chat";
-    public static final String appid = "";
-    public static final String apiSecret = "";
-    public static final String apiKey = "";
+    public static final String hostUrl = "https://spark-api.xf-yun.com/v3.5/chat";
+    public static final String appid = "c72c8624";
+    public static final String apiSecret = "YWVmODZlNTAxOTY0OWUwZDEzYjk0OGQw";
+    public static final String apiKey = "195606ee6f8cc7b485c37a59d7d6d65e";
     public static List<RoleContent> historyList = new ArrayList();
     public static String totalAnswer = "";
     public static String NewQuestion = "";
@@ -93,7 +93,7 @@ public class BigModelNew extends WebSocketListener {
                 header.put("uid", UUID.randomUUID().toString().substring(0, 10));
                 JSONObject parameter = new JSONObject();
                 JSONObject chat = new JSONObject();
-                chat.put("domain", "generalv2");
+                chat.put("domain", "generalv3.5");
                 chat.put("temperature", 0.5);
                 chat.put("max_tokens", 4096);
                 parameter.put("chat", chat);
@@ -188,7 +188,7 @@ public class BigModelNew extends WebSocketListener {
                 System.out.print("\ufffd\ufffd\u951b\ufffd");
                 totalFlag = false;
                 NewQuestion = scanner.nextLine();
-                String authUrl = getAuthUrl("https://spark-api.xf-yun.com/v2.1/chat", "", "");
+                String authUrl = getAuthUrl("https://spark-api.xf-yun.com/v4.0/chat", "", "");
                 OkHttpClient client = (new OkHttpClient.Builder()).build();
                 String url = authUrl.toString().replace("http://", "ws://").replace("https://", "wss://");
                 Request request = (new Request.Builder()).url(url).build();

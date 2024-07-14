@@ -52,9 +52,11 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
 
+    api(project(":LocalRepo:SparkChain"))
+    implementation files("lib/SparkChain")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
 
 }
