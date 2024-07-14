@@ -1,11 +1,7 @@
 plugins {
-    id("com.android.application") version "8.4.0"
-
+    id("com.android.application")
     id("com.google.gms.google-services")
 }
-
-
-
 
 android {
     namespace = "online.manongbbq.aieducation"
@@ -33,10 +29,13 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs("app/libs")
+    }
+}
+
 dependencies {
-
-
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -52,11 +51,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
 
-    api(project(":LocalRepo:SparkChain"))
-    implementation files("lib/SparkChain")
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+    api(mapOf("name" to "SparkChain", "ext" to "aar"))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar", "*.jar"))))
 }

@@ -1,2 +1,4 @@
 configurations.maybeCreate("default")
-artifacts("default", file("SparkChain.arr"))
+artifacts {
+    add("default", file("SparkChain.aar"))
+}

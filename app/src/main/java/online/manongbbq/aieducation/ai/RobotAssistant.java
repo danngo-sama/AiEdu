@@ -91,11 +91,12 @@ package online.manongbbq.aieducation.ai;
 import android.content.Context;
 import android.util.Log;
 
-import com.spark.sdk.SparkChain;
-import com.spark.sdk.SparkChainConfig;
-import com.spark.sdk.LLM;
-import com.spark.sdk.LLMConfig;
-import com.spark.sdk.LLMOutput;
+import com.iflytek.sparkchain.core.LLM;
+import com.iflytek.sparkchain.core.LLMConfig;
+import com.iflytek.sparkchain.core.LLMOutput;
+import com.iflytek.sparkchain.core.SparkChain;
+import com.iflytek.sparkchain.core.SparkChainConfig;
+
 
 public class RobotAssistant {
 
