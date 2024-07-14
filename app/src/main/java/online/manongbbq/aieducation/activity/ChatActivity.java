@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import online.manongbbq.aieducation.R;
-import online.manongbbq.aieducation.ai.RobotAssistant;
+//import online.manongbbq.aieducation.ai.RobotAssistant;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -55,11 +55,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private String getAnswer(String question) {
-        Log.d("MyTag", "chat函数已经被调用！");
-        // Placeholder for the actual AI answer fetching logic
-        String answer1= new RobotAssistant().getAnswer(question);
-        System.out.print(answer1);
-        Log.d("MyTag", "返回内容是"+answer1);
-        return answer1;
+//        Log.d("MyTag", "chat函数已经被调用！");
+//        // Placeholder for the actual AI answer fetching logic
+//        String answer1= new RobotAssistant().getAnswer(question);
+//        System.out.print(answer1);
+//        Log.d("MyTag", "返回内容是"+answer1);
+//        return answer1;
+        return question;
     }
 }

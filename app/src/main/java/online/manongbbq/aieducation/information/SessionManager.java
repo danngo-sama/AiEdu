@@ -2,6 +2,12 @@ package online.manongbbq.aieducation.information;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import java.util.List;
+import java.util.Map;
+import online.manongbbq.aieducation.data.CloudDatabaseHelper;
+import online.manongbbq.aieducation.data.FirestoreQueryCallback;
 
 public class SessionManager {
 
@@ -10,6 +16,7 @@ public class SessionManager {
     private static final String KEY_PASSWORD = "password";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private CloudDatabaseHelper cloudDbHelper;
 
     public SessionManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -44,6 +51,38 @@ public class SessionManager {
      */
     public boolean isLoggedIn() {
         return sharedPreferences.contains(KEY_USER_ID);
+    }
+
+
+    /**
+     * 获取用户姓名
+     *
+     * @param callback 回调接口
+     */
+    public void getUserName(NameCallback callback) {
+        int userId = getUserId();
+        if (userId == -1) {
+            callback.onError(new Exception("User not logged in"));
+            return;
+        }
+
+        cloudDbHelper.queryUserInfo(userId, new FirestoreQueryCallback() {
+            @Override
+            public void onCallback(List<Map<String, Object>> userList) {
+                if (userList.isEmpty()) {
+                    callback.onError(new Exception("User not found"));
+                    return;
+                }
+
+                Map<String, Object> user = userList.get(0);
+                String name = (String) user.get("name");
+                if (name != null) {
+                    callback.onNameFound(name);
+                } else {
+                    callback.onError(new Exception("Name not found"));
+                }
+            }
+        });
     }
 
     /**
