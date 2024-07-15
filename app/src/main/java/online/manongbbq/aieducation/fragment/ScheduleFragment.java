@@ -1,5 +1,6 @@
 package online.manongbbq.aieducation.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +20,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,6 +30,8 @@ import java.util.List;
 import java.util.Locale;
 
 import online.manongbbq.aieducation.R;
+import online.manongbbq.aieducation.data.DatabaseOperations;
+import online.manongbbq.aieducation.data.DatabaseOperations;
 
 public class ScheduleFragment extends Fragment {
 
@@ -35,9 +41,11 @@ public class ScheduleFragment extends Fragment {
     private Button buttonAddEvent;
     private LinearLayout linearLayoutEvents;
     private Calendar selectedDate = Calendar.getInstance(Locale.CHINA);
-    private List<String> events = new ArrayList<>();
+    private List<JSONObject> events = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable runnable;
+
+//    private DatabaseOperations data;
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -69,6 +77,9 @@ public class ScheduleFragment extends Fragment {
 
         buttonAddEvent.setOnClickListener(v -> addEvent());
 
+        // Load events from database
+        loadEventsFromDatabase();
+
         // Initialize and start the handler to update the date display every second
         runnable = new Runnable() {
             @Override
@@ -80,18 +91,43 @@ public class ScheduleFragment extends Fragment {
         handler.post(runnable);
     }
 
+    private void loadEventsFromDatabase() {
+        try {
+            events = DatabaseOperations.querySchedule(getContext());
+            updateEventsDisplay();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "加载日程失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void addEvent() {
         String eventText = editTextEvent.getText().toString().trim();
         if (eventText.isEmpty()) {
             Toast.makeText(getContext(), "请输入事件内容", Toast.LENGTH_SHORT).show();
             return;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日, EEEE", Locale.CHINA);
-        String event = sdf.format(selectedDate.getTime()) + ": " + eventText;
-        events.add(event);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
+        String starttime = sdf.format(selectedDate.getTime());
+        String endtime = ""; // 不使用endtime参数
+        int scheduleid = events.size() + 1; // 简单地用列表的大小+1作为scheduleid
+
+        DatabaseOperations.insertSchedule(getContext(), scheduleid, starttime, endtime, eventText);
+
+        JSONObject newEvent = new JSONObject();
+        try {
+            newEvent.put("scheduleid", scheduleid);
+            newEvent.put("starttime", starttime);
+            newEvent.put("endtime", endtime);
+            newEvent.put("task", eventText);
+            events.add(newEvent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         updateEventsDisplay();
         editTextEvent.setText("");
-        Toast.makeText(getContext(), "添加日程: " + event, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "添加日程: " + eventText, Toast.LENGTH_SHORT).show();
     }
 
     private void updateEventsDisplay() {
@@ -99,16 +135,27 @@ public class ScheduleFragment extends Fragment {
         if (events.isEmpty()) {
             linearLayoutEvents.addView(textViewNoEvents);
         } else {
-            for (String event : events) {
+            for (JSONObject event : events) {
                 CheckBox checkBox = new CheckBox(getContext());
-                checkBox.setText(event);
-                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
-                        events.remove(event);
-                        updateEventsDisplay();
-                    }
-                });
-                linearLayoutEvents.addView(checkBox);
+                try {
+                    String displayText = event.getString("starttime") + ": " + event.getString("task");
+                    checkBox.setText(displayText);
+                    checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                        if (isChecked) {
+                            try {
+                                int scheduleid = event.getInt("scheduleid");
+                                DatabaseOperations.deleteSchedule(getContext(), scheduleid);
+                                events.remove(event);
+                                updateEventsDisplay();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    linearLayoutEvents.addView(checkBox);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
