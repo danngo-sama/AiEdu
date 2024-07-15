@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+    kotlin("android")
 }
 
 android {
@@ -27,20 +28,22 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
 }
 
 repositories {
+    google()
+    mavenCentral()
     flatDir {
-        dirs("app/libs")
+        dirs("libs")
     }
 }
 
 dependencies {
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.activity)
-    implementation(libs.constraintlayout)
+    implementation("androidx.appcompat:appcompat:1.4.0")
     implementation("com.google.android.material:material:1.6.0")
+    implementation("androidx.activity:activity:1.4.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
 
     implementation("com.alibaba:fastjson:1.2.78")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
@@ -51,10 +54,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
-    api(mapOf("name" to "SparkChain", "ext" to "aar"))
+    api(files("libs/SparkChain.aar"))
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar", "*.jar"))))
 }

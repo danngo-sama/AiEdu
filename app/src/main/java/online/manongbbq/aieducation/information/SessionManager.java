@@ -10,13 +10,15 @@ import online.manongbbq.aieducation.data.CloudDatabaseHelper;
 import online.manongbbq.aieducation.data.FirestoreQueryCallback;
 
 public class SessionManager {
+    private static SessionManager instance;
+    private Context context;
 
     private static final String PREF_NAME = "MyApp";
     private static final String KEY_USER_ID = "userId";
     private static final String KEY_PASSWORD = "password";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private CloudDatabaseHelper cloudDbHelper;
+    private CloudDatabaseHelper cloudDbHelper = new CloudDatabaseHelper();
 
     public SessionManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -91,5 +93,12 @@ public class SessionManager {
     public void logout() {
         editor.clear();
         editor.apply();
+    }
+
+    public static synchronized SessionManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new SessionManager(context);
+        }
+        return instance;
     }
 }

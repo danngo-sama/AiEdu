@@ -33,6 +33,7 @@ public class MineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mine_stu, container, false);
+        sessionManager = SessionManager.getInstance(getActivity());
 
         TextView textViewName = view.findViewById(R.id.textViewName);
         TextView textViewStudentID = view.findViewById(R.id.textViewStudentID);

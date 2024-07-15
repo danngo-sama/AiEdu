@@ -10,11 +10,17 @@ buildscript {
         google()
         mavenCentral()
         flatDir {
-            dirs("libs","app/libs")
+            dirs("libs", "app/libs")
         }
     }
 }
 
 allprojects {
-    // 可以保留其他项目的全局配置，但不需要在这里添加仓库
+    repositories {
+        google()
+        mavenCentral()
+        flatDir {
+            dirs("libs", "app/libs")
+        }
+    }
 }
