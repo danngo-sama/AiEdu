@@ -5,19 +5,19 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import online.manongbbq.aieducation.R;
-//import online.manongbbq.aieducation.ai.RobotAssistant;
+import online.manongbbq.aieducation.ai.RobotAssistant;
 
 public class ChatActivity extends AppCompatActivity {
 
     private LinearLayout chatLayout;
     private EditText editTextQuestion;
-    private Button buttonSend,buttonBack;
+    private Button buttonSend, buttonBack;
+    private RobotAssistant robotAssistant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,8 @@ public class ChatActivity extends AppCompatActivity {
         editTextQuestion = findViewById(R.id.editTextQuestion);
         buttonSend = findViewById(R.id.buttonSend);
         buttonBack = findViewById(R.id.buttonBack);
+
+        robotAssistant = new RobotAssistant(this); // 传递Context参数
 
         buttonSend.setOnClickListener(v -> sendQuestion());
         buttonBack.setOnClickListener(v -> finish());
@@ -55,12 +57,9 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private String getAnswer(String question) {
-//        Log.d("MyTag", "chat函数已经被调用！");
-//        // Placeholder for the actual AI answer fetching logic
-//        String answer1= new RobotAssistant().getAnswer(question);
-//        System.out.print(answer1);
-//        Log.d("MyTag", "返回内容是"+answer1);
-//        return answer1;
-        return question;
+        Log.d("MyTag", "chat函数已经被调用！");
+        String answer = robotAssistant.getAnswer(question); // 使用已经初始化的robotAssistant
+        Log.d("MyTag", "返回内容是" + answer);
+        return answer;
     }
 }
