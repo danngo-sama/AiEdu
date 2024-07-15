@@ -100,6 +100,8 @@ import com.iflytek.sparkchain.core.SparkChainConfig;
 
 public class RobotAssistant {
 
+
+
     private static final String TAG = "RobotAssistant";
     private static final String APP_ID = "c72c8624"; // 替换为实际的appId
     private static final String API_KEY = "195606ee6f8cc7b485c37a59d7d6d65e"; // 替换为实际的apiKey

@@ -19,6 +19,8 @@ public class ChatActivity extends AppCompatActivity {
     private Button buttonSend, buttonBack;
     private RobotAssistant robotAssistant;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -12,7 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +30,10 @@ import online.manongbbq.aieducation.R;
 public class ScheduleFragment extends Fragment {
 
     private CalendarView calendarView;
-    private TextView textViewDate, textViewEvents;
+    private TextView textViewDate, textViewNoEvents;
     private EditText editTextEvent;
     private Button buttonAddEvent;
+    private LinearLayout linearLayoutEvents;
     private Calendar selectedDate = Calendar.getInstance(Locale.CHINA);
     private List<String> events = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
@@ -50,9 +54,10 @@ public class ScheduleFragment extends Fragment {
 
         calendarView = view.findViewById(R.id.calendarView);
         textViewDate = view.findViewById(R.id.textViewDate);
-        textViewEvents = view.findViewById(R.id.textViewEvents);
+        textViewNoEvents = view.findViewById(R.id.textViewNoEvents);
         editTextEvent = view.findViewById(R.id.editTextEvent);
         buttonAddEvent = view.findViewById(R.id.buttonAddEvent);
+        linearLayoutEvents = view.findViewById(R.id.linearLayoutEvents);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日, EEEE", Locale.CHINA);
         textViewDate.setText(sdf.format(selectedDate.getTime()));
@@ -90,11 +95,22 @@ public class ScheduleFragment extends Fragment {
     }
 
     private void updateEventsDisplay() {
-        StringBuilder eventsDisplay = new StringBuilder("已添加的事件：\n");
-        for (String event : events) {
-            eventsDisplay.append(event).append("\n");
+        linearLayoutEvents.removeAllViews();
+        if (events.isEmpty()) {
+            linearLayoutEvents.addView(textViewNoEvents);
+        } else {
+            for (String event : events) {
+                CheckBox checkBox = new CheckBox(getContext());
+                checkBox.setText(event);
+                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        events.remove(event);
+                        updateEventsDisplay();
+                    }
+                });
+                linearLayoutEvents.addView(checkBox);
+            }
         }
-        textViewEvents.setText(eventsDisplay.toString());
     }
 
     private void updateDateTime() {
