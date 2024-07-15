@@ -101,9 +101,9 @@ import com.iflytek.sparkchain.core.SparkChainConfig;
 public class RobotAssistant {
 
     private static final String TAG = "RobotAssistant";
-    private static final String APP_ID = "your_app_id"; // 替换为实际的appId
-    private static final String API_KEY = "your_api_key"; // 替换为实际的apiKey
-    private static final String API_SECRET = "your_api_secret"; // 替换为实际的apiSecret
+    private static final String APP_ID = "c72c8624"; // 替换为实际的appId
+    private static final String API_KEY = "195606ee6f8cc7b485c37a59d7d6d65e"; // 替换为实际的apiKey
+    private static final String API_SECRET = "YWVmODZlNTAxOTY0OWUwZDEzYjk0OGQw"; // 替换为实际的apiSecret
 
     private LLM llm;
     private Context context;
@@ -118,15 +118,15 @@ public class RobotAssistant {
                 .appID(APP_ID)
                 .apiKey(API_KEY)
                 .apiSecret(API_SECRET)
-                .build();
+                /*.build()*/;
 
         int ret = SparkChain.getInst().init(context, config);
         Log.d(TAG, "SDK init: " + ret);
 
         LLMConfig llmConfig = LLMConfig.builder()
-                .domain("generalv2")
-                .url("wss://spark-api.xf-yun.com/v2.1/chat")
-                .build();
+                .domain("generalv3.5")
+                .url("wss://spark-api.xf-yun.com/v3.5/chat")
+                /*.build()*/;
 
         llm = new LLM(llmConfig);
     }
