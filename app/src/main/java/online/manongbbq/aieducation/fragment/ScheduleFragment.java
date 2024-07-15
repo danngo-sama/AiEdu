@@ -1,6 +1,5 @@
 package online.manongbbq.aieducation.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +15,6 @@ import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +28,6 @@ import java.util.List;
 import java.util.Locale;
 
 import online.manongbbq.aieducation.R;
-import online.manongbbq.aieducation.data.DatabaseOperations;
 import online.manongbbq.aieducation.data.DatabaseOperations;
 
 public class ScheduleFragment extends Fragment {
@@ -53,7 +50,7 @@ public class ScheduleFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_schedule_stu, container, false);
+        return inflater.inflate(R.layout.fragment_schedule, container, false);
     }
 
     @Override

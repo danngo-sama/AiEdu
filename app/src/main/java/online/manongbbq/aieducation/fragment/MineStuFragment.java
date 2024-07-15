@@ -16,17 +16,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.activity.AboutActivity;
 import online.manongbbq.aieducation.activity.FaceInfoActivity;
 import online.manongbbq.aieducation.activity.VersionInfoActivity;
 import online.manongbbq.aieducation.information.NameCallback;
 import online.manongbbq.aieducation.information.SessionManager;
 
-public class MineFragment extends Fragment {
+public class MineStuFragment extends Fragment {
     private SessionManager sessionManager;
 
-    public MineFragment() {
+    public MineStuFragment() {
         // Required empty public constructor
     }
 

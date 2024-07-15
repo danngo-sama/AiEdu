@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                             if (!switchIsTeacher.isChecked()) {
                                 navigateToHomepage();
                             } else {
-                                Toast.makeText(MainActivity.this, "登录成功，但您是教师。", Toast.LENGTH_SHORT).show();
+                                navigateToHomepageTe();
                             }
                         } else {
                             Toast.makeText(MainActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
@@ -82,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void navigateToHomepage() {
         Intent intent = new Intent(MainActivity.this, HomepageStuActivity.class);
+        startActivity(intent);
+        finish(); // 关闭当前活动，防止返回
+    }
+
+    private void navigateToHomepageTe() {
+        Intent intent = new Intent(MainActivity.this, HomepageTeActivity.class);
         startActivity(intent);
         finish(); // 关闭当前活动，防止返回
     }

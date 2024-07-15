@@ -7,52 +7,29 @@
     android:background="@drawable/bg3"
     tools:context=".fragment.HomeStuFragment">
 
+
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="332dp"
         android:layout_height="131dp"
-        android:layout_marginTop="132dp"
-        app:layout_constraintHorizontal_bias="0.443"
+        android:layout_marginTop="208dp"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/course" />
 
     <ImageView
-        android:id="@+id/imageView4"
-
-        android:layout_width="332dp"
-        android:layout_height="131dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintHorizontal_bias="0.44"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:srcCompat="@drawable/wrongbook" />
-
-    <ImageView
         android:id="@+id/imageView5"
         android:layout_width="332dp"
         android:layout_height="131dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintHorizontal_bias="0.455"
+        android:layout_marginTop="84dp"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
         app:srcCompat="@drawable/robot" />
-
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="332dp"
-        android:layout_height="131dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintHorizontal_bias="0.455"
-        app:layout_constraintLeft_toLeftOf="parent"
-
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView5"
-        app:srcCompat="@drawable/report" />
 
     <ImageView
         android:id="@+id/imageView7"

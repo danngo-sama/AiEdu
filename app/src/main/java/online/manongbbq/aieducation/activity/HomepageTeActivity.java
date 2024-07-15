@@ -1,24 +1,24 @@
 package online.manongbbq.aieducation.activity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.fragment.HomeStuFragment;
 import online.manongbbq.aieducation.fragment.MineStuFragment;
 import online.manongbbq.aieducation.fragment.ScheduleFragment;
-import online.manongbbq.aieducation.R;
 
-import android.view.MenuItem;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-public class HomepageStuActivity extends AppCompatActivity {
+public class HomepageTeActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_homepage_stu);
+        setContentView(R.layout.activity_homepage_te);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
