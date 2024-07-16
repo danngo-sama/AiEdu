@@ -20,11 +20,16 @@
         <activity android:name=".activity.MessagesActivity" />
         <activity android:name=".activity.VersionInfoActivity" />
         <activity android:name=".activity.CourseActivityStu" />
+        <activity android:name=".activity.CourseActivityTe" />
         <activity android:name=".activity.AttendanceActivityStu" />
+        <activity android:name=".activity.AttendanceActivityTe" />
         <activity android:name=".activity.VoiceToTextActivity" />
         <activity android:name=".activity.LeaveActivityStu" />
+        <activity android:name=".activity.LeaveActivityTe" />
         <activity android:name=".activity.ReportActivityStu" />
         <activity android:name=".activity.WrongBookActivity" />
+        <activity android:name=".activity.HomepageTeActivity" />
+
 
 
 
