@@ -2,12 +2,15 @@ package online.manongbbq.aieducation.activity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONException;
 
 import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.ai.RobotAssistant;
@@ -18,8 +21,6 @@ public class ChatActivity extends AppCompatActivity {
     private EditText editTextQuestion;
     private Button buttonSend, buttonBack;
     private RobotAssistant robotAssistant;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +45,34 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
 
-        addMessageToChat("你: " + question);
+        addMessageToChat("你: " + question, true);
         String answer = getAnswer(question);
-        addMessageToChat("AI: " + answer);
+        addMessageToChat("AI: " + answer, false);
 
         editTextQuestion.setText("");
     }
 
-    private void addMessageToChat(String message) {
+    private void addMessageToChat(String message, boolean isUser) {
         TextView textView = new TextView(this);
         textView.setText(message);
-        textView.setPadding(8, 8, 8, 8);
+        textView.setPadding(16, 16, 16, 16);
+        textView.setTextColor(getResources().getColor(android.R.color.black));
+        textView.setBackgroundResource(R.drawable.chat_bubble_user); // 设置背景
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(8, 8, 8, 8);
+
+        if (isUser) {
+            params.gravity = Gravity.END;
+            textView.setBackgroundResource(R.drawable.chat_bubble_user); // 用户消息背景
+        } else {
+            params.gravity = Gravity.START;
+            textView.setBackgroundResource(R.drawable.chat_bubble_ai); // AI消息背景
+        }
+
+        textView.setLayoutParams(params);
         chatLayout.addView(textView);
     }
 
