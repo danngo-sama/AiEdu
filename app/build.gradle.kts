@@ -25,8 +25,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
 }
@@ -49,6 +49,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("androidx.fragment:fragment:1.4.0")
     implementation("com.google.code.gson:gson:2.10.1")
+
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.apache.httpcomponents:httpcore:4.4.13")
 
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-analytics")
