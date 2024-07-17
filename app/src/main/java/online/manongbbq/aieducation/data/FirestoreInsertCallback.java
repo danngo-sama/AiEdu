@@ -1,5 +1,9 @@
 package online.manongbbq.aieducation.data;
 
+import android.widget.Toast;
+
+import online.manongbbq.aieducation.activity.CourseActivityTe;
+
 /**
  * 存储数据回调接口
  *
@@ -24,5 +28,8 @@ public interface FirestoreInsertCallback {
     void onSuccess();
 
     void onFailure(Exception e);
+
+    void onInsertSuccess();
+    void onInsertFailure(Exception e);
 }
 

@@ -81,6 +81,16 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onFailure(Exception e) {
                             Toast.makeText(RegisterActivity.this, "注册失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
+
+                        @Override
+                        public void onInsertSuccess() {
+
+                        }
+
+                        @Override
+                        public void onInsertFailure(Exception e) {
+
+                        }
                     });
                 } catch (NumberFormatException e) {
                     Toast.makeText(RegisterActivity.this, "用户ID和密码必须是整数", Toast.LENGTH_SHORT).show();

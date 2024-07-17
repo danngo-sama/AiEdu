@@ -19,6 +19,7 @@ import java.util.Locale;
 import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.activity.ChatActivity;
 import online.manongbbq.aieducation.activity.CourseActivityStu;
+import online.manongbbq.aieducation.activity.CourseActivityTe;
 import online.manongbbq.aieducation.activity.ReportActivityStu;
 import online.manongbbq.aieducation.activity.WrongBookActivity;
 
@@ -34,7 +35,7 @@ public class HomeTeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home_stu, container, false);
+        View view = inflater.inflate(R.layout.fragment_home_te, container, false);
 
         textViewDateTime = view.findViewById(R.id.textViewDateTime);
         ImageView imageView3 = view.findViewById(R.id.imageView3);
@@ -43,7 +44,7 @@ public class HomeTeFragment extends Fragment {
 
 
         imageView3.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CourseActivityStu.class);
+            Intent intent = new Intent(getActivity(), CourseActivityTe.class);
             startActivity(intent);
         });
 

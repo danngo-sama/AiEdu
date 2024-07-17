@@ -11,7 +11,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.fragment.HomeStuFragment;
+import online.manongbbq.aieducation.fragment.HomeTeFragment;
 import online.manongbbq.aieducation.fragment.MineStuFragment;
+import online.manongbbq.aieducation.fragment.MineTeFragment;
 import online.manongbbq.aieducation.fragment.ScheduleFragment;
 
 public class HomepageTeActivity extends AppCompatActivity {
@@ -27,9 +29,9 @@ public class HomepageTeActivity extends AppCompatActivity {
                 Fragment selectedFragment = null;
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_home) {
-                    selectedFragment = new HomeStuFragment();
+                    selectedFragment = new HomeTeFragment();
                 } else if (itemId == R.id.nav_mine) {
-                    selectedFragment = new MineStuFragment();
+                    selectedFragment = new MineTeFragment();
                 } else if (itemId == R.id.nav_schedule) {
                     selectedFragment = new ScheduleFragment();
                 }

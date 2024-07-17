@@ -16,6 +16,7 @@ public class SessionManager {
     private static final String PREF_NAME = "MyApp";
     private static final String KEY_USER_ID = "userId";
     private static final String KEY_PASSWORD = "password";
+    private static final String KEY_IS_STUDENT = "isStudent";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private CloudDatabaseHelper cloudDbHelper = new CloudDatabaseHelper();
@@ -30,10 +31,12 @@ public class SessionManager {
      *
      * @param userId 用户ID
      * @param password 用户密码
+     * @param isStudent 是否是学生
      */
-    public void saveUserCredentials(int userId, int password) {
+    public void saveUserCredentials(int userId, int password, boolean isStudent) {
         editor.putInt(KEY_USER_ID, userId);
         editor.putInt(KEY_PASSWORD, password);
+        editor.putBoolean(KEY_IS_STUDENT, isStudent);
         editor.apply();
     }
 
@@ -47,6 +50,15 @@ public class SessionManager {
     }
 
     /**
+     * 获取是否是学生
+     *
+     * @return 是否是学生，如果未找到则返回false
+     */
+    public boolean isStudent() {
+        return sharedPreferences.getBoolean(KEY_IS_STUDENT, false);
+    }
+
+    /**
      * 检查用户是否已登录
      *
      * @return 如果用户已登录则返回true，否则返回false
@@ -54,7 +66,6 @@ public class SessionManager {
     public boolean isLoggedIn() {
         return sharedPreferences.contains(KEY_USER_ID);
     }
-
 
     /**
      * 获取用户姓名
