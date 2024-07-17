@@ -1,5 +1,6 @@
 package online.manongbbq.aieducation.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 
 import online.manongbbq.aieducation.R;
+import online.manongbbq.aieducation.ai.RobotAssistant;
 import online.manongbbq.aieducation.data.DatabaseOperations;
 
 public class ScheduleFragment extends Fragment {
@@ -35,12 +38,14 @@ public class ScheduleFragment extends Fragment {
     private CalendarView calendarView;
     private TextView textViewDate, textViewNoEvents;
     private EditText editTextEvent;
-    private Button buttonAddEvent;
+    private Button buttonAddEvent,buttonAIDecision;
     private LinearLayout linearLayoutEvents;
     private Calendar selectedDate = Calendar.getInstance(Locale.CHINA);
     private List<JSONObject> events = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable runnable;
+
+    private RobotAssistant robotAssistant;
 
 //    private DatabaseOperations data;
 
@@ -57,12 +62,20 @@ public class ScheduleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        robotAssistant = new RobotAssistant(getContext());
+
+
         calendarView = view.findViewById(R.id.calendarView);
         textViewDate = view.findViewById(R.id.textViewDate);
         textViewNoEvents = view.findViewById(R.id.textViewNoEvents);
         editTextEvent = view.findViewById(R.id.editTextEvent);
         buttonAddEvent = view.findViewById(R.id.buttonAddEvent);
         linearLayoutEvents = view.findViewById(R.id.linearLayoutEvents);
+
+        buttonAIDecision = view.findViewById(R.id.buttonAIDecision);
+
+        buttonAIDecision.setOnClickListener(v -> showAIDecision());
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日, EEEE", Locale.CHINA);
         textViewDate.setText(sdf.format(selectedDate.getTime()));
@@ -86,6 +99,44 @@ public class ScheduleFragment extends Fragment {
             }
         };
         handler.post(runnable);
+    }
+
+    private void showAIDecision() {
+        if (events.isEmpty()) {
+            Toast.makeText(getContext(), "没有日程可供分析", Toast.LENGTH_SHORT).show();
+            Log.d("ScheduleFragment", "没有日程可供分析");
+            return;
+        }
+
+        StringBuilder tasks = new StringBuilder();
+        for (JSONObject event : events) {
+            try {
+                tasks.append(event.getString("task")).append("\n");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e("ScheduleFragment", "解析日程失败: " + e.getMessage());
+                Toast.makeText(getContext(), "解析日程失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        try {
+            String text="我下面会给你几个任务，请你帮我分析一下我做的这几个任务的最佳完成顺序是什么。不要给我说你做不到，给我列出排序以及写出分析\n";
+            String task9=tasks.toString();
+            String Text=text+task9;
+            String decisionResult = robotAssistant.getAnswer(Text);
+            Log.d("ScheduleFragment", "AI决策分析结果: " + decisionResult);
+
+            new AlertDialog.Builder(getContext())
+                    .setTitle("AI决策分析")
+                    .setMessage(decisionResult)
+                    .setPositiveButton("确定", null)
+                    .show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("ScheduleFragment", "AI决策分析失败: " + e.getMessage());
+            Toast.makeText(getContext(), "AI决策分析失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadEventsFromDatabase() {
