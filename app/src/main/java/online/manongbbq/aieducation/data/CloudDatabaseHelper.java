@@ -766,5 +766,181 @@ public class CloudDatabaseHelper {
                     }
                 });
     }
+
+    /**
+     * Inserts attendance information into the database.
+     *
+     * @param courseId     The ID of the course.
+     * @param teacherId    The ID of the teacher.
+     * @param attendanceList The list of attendance records.
+     * @param locationData The binary location data.
+     * @param startTime    The start time of the attendance.
+     * @param endTime      The end time of the attendance.
+     * @param callback     A callback to handle the result of the operation.
+     * @see FirestoreInsertCallback
+     */
+    public void insertAttendanceInfo(int courseId, int teacherId, List<Map<String, Object>> attendanceList,
+                                     byte[] locationData, Date startTime, Date endTime, FirestoreInsertCallback callback) {
+        Map<String, Object> attendanceInfo = new HashMap<>();
+        attendanceInfo.put("courseId", courseId);
+        attendanceInfo.put("teacherId", teacherId);
+        attendanceInfo.put("attendanceList", attendanceList);
+        attendanceInfo.put("locationData", locationData);
+        attendanceInfo.put("startTime", startTime);
+        attendanceInfo.put("endTime", endTime);
+
+        db.collection("attendanceInfo")
+                .add(attendanceInfo)
+                .addOnSuccessListener(documentReference -> callback.onStoreSuccess())
+                .addOnFailureListener(e -> callback.onStoreFailure(e));
+    }
+
+    /**
+     * Queries attendance information by course ID.
+     *
+     * @param courseId The ID of the course.
+     * @param callback A callback to handle the result of the query.
+     * @see FirestoreQueryCallback
+     */
+    public void queryAttendanceInfoByCourseId(int courseId, FirestoreQueryCallback callback) {
+        db.collection("attendanceInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Map<String, Object>> attendanceList = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            attendanceList.add(document.getData());
+                        }
+                        callback.onCallback(attendanceList);
+                    } else {
+                        Log.w("Firestore", "Error getting documents.", task.getException());
+                        callback.onCallback(new ArrayList<>());
+                    }
+                });
+    }
+
+    /**
+     * Updates attendance information by course ID and teacher ID.
+     *
+     * @param courseId   The ID of the course.
+     * @param updates    The information to update, stored in a Map.
+     * @param callback   A callback to handle the result of the update operation.
+     * @see FirestoreUpdateCallback
+     */
+    public void updateAttendanceInfo(int courseId, Map<String, Object> updates, FirestoreUpdateCallback callback) {
+        db.collection("attendanceInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("attendanceInfo")
+                                .document(docId)
+                                .update(updates)
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "Attendance info not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * Updates the attendance status of a student in a specific course.
+     *
+     * @param courseId   The ID of the course.
+     * @param studentId  The ID of the student.
+     * @param isPresent  The new attendance status of the student.
+     * @param callback   A callback to handle the result of the update operation.
+     * @see FirestoreUpdateCallback
+     */
+    public void updateStudentAttendanceStatus(int courseId, int studentId, boolean isPresent, FirestoreUpdateCallback callback) {
+        db.collection("attendanceInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("attendanceInfo")
+                                .document(docId)
+                                .update("attendanceList", FieldValue.arrayRemove(new HashMap<String, Object>() {{
+                                    put("studentId", studentId);
+                                    put("isPresent", !isPresent); // remove the old status
+                                }}))
+                                .addOnSuccessListener(aVoid -> {
+                                    db.collection("attendanceInfo")
+                                            .document(docId)
+                                            .update("attendanceList", FieldValue.arrayUnion(new HashMap<String, Object>() {{
+                                                put("studentId", studentId);
+                                                put("isPresent", isPresent); // add the new status
+                                            }}))
+                                            .addOnSuccessListener(aVoid2 -> callback.onUpdateSuccess())
+                                            .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                                })
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "Attendance info not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * Deletes attendance information by course ID.
+     *
+     * @param courseId The ID of the course.
+     * @param callback A callback to handle the result of the delete operation.
+     * @see FirestoreDeleteCallback
+     */
+    public void deleteAttendanceInfo(int courseId, FirestoreDeleteCallback callback) {
+        db.collection("attendanceInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("attendanceInfo")
+                                .document(docId)
+                                .delete()
+                                .addOnSuccessListener(aVoid -> callback.onDeleteSuccess())
+                                .addOnFailureListener(e -> callback.onDeleteFailure(e));
+                    } else {
+                        Log.w("Firestore", "Attendance info not found or error getting documents.", task.getException());
+                        callback.onDeleteFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * Adds a new student to the attendance list with an initial status of false (not present).
+     *
+     * @param courseId  The ID of the course.
+     * @param studentId The ID of the student to be added.
+     * @param callback  A callback to handle the result of the update operation.
+     * @see FirestoreUpdateCallback
+     */
+    public void addStudentToAttendance(int courseId, int studentId, FirestoreUpdateCallback callback) {
+        db.collection("attendanceInfo")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        Map<String, Object> newStudent = new HashMap<>();
+                        newStudent.put("studentId", studentId);
+                        newStudent.put("isPresent", false);
+                        db.collection("attendanceInfo")
+                                .document(docId)
+                                .update("attendanceList", FieldValue.arrayUnion(newStudent))
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "Attendance info not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
 }
 
