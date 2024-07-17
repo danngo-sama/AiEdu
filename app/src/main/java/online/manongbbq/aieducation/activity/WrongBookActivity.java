@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +32,7 @@ import androidx.core.content.FileProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,6 +42,8 @@ import java.util.List;
 
 import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.activity.AiAnalyzeWrActivity;
+import online.manongbbq.aieducation.ai.AiAnalysis;
+import online.manongbbq.aieducation.ai.ImageToText;
 import online.manongbbq.aieducation.data.WrBoDatabaseOperations;
 
 public class WrongBookActivity extends AppCompatActivity {
@@ -63,10 +68,7 @@ public class WrongBookActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
 
         ImageButton aiAnalyzeButton = findViewById(R.id.button_ai_analyze);
-        aiAnalyzeButton.setOnClickListener(v -> {
-            Intent intent = new Intent(WrongBookActivity.this, AiAnalyzeWrActivity.class);
-            startActivity(intent);
-        });
+        aiAnalyzeButton.setOnClickListener(v -> analyzeMistakes());
 
         Button uploadButton = findViewById(R.id.button_upload);
         uploadButton.setOnClickListener(v -> {
@@ -105,6 +107,79 @@ public class WrongBookActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private void analyzeMistakes() {
+        try {
+            List<JSONObject> errorBookList = db.queryErrorBook();
+            if (errorBookList.isEmpty()) {
+                Toast.makeText(this, "无错题", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 选取最近5张错题图片
+            int count = Math.min(errorBookList.size(), 5);
+            StringBuilder combinedText = new StringBuilder();
+
+            ImageToText imageToText = new ImageToText();
+            for (int i = 0; i < count; i++) {
+                String imgPath = errorBookList.get(i).getString("img_path");
+                Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
+
+                if (bitmap == null) {
+                    Log.e("analyzeMistakes", "Failed to decode image: " + imgPath);
+                    Toast.makeText(this, "图片解码失败: " + imgPath, Toast.LENGTH_SHORT).show();
+                    continue;
+                }
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                boolean compressed = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                if (!compressed) {
+                    Log.e("analyzeMistakes", "Failed to compress image: " + imgPath);
+                    Toast.makeText(this, "图片压缩失败: " + imgPath, Toast.LENGTH_SHORT).show();
+                    continue;
+                }
+
+                byte[] imageBytes = baos.toByteArray();
+                String imageBase64 = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+                try {
+                    String text = imageToText.toText(imageBase64);
+                    combinedText.append(text).append("\n");
+                    Log.d("analyzeMistakes", "Image to text success: " + text);
+                } catch (Exception e) {
+                    Log.e("analyzeMistakes", "Image to text conversion failed for image: " + imgPath, e);
+                    Toast.makeText(this, "图片识别失败: " + imgPath + " 错误信息: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+
+            if (combinedText.length() == 0) {
+                Toast.makeText(this, "没有可识别的图片文本", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 调用AI分析
+            AiAnalysis aiAnalysis = new AiAnalysis(this);
+            try {
+                String analysisResult = aiAnalysis.analyzeText(combinedText.toString());
+
+                // 显示弹窗
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("AI分析结果");
+                builder.setMessage(analysisResult);
+                builder.setPositiveButton("确定", (dialog, which) -> dialog.dismiss());
+                builder.show();
+
+            } catch (Exception e) {
+                Log.e("analyzeMistakes", "AI analysis failed", e);
+                Toast.makeText(this, "AI分析失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
+        } catch (JSONException e) {
+            Log.e("analyzeMistakes", "Error loading mistake data from database", e);
+            Toast.makeText(this, "加载错题失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
