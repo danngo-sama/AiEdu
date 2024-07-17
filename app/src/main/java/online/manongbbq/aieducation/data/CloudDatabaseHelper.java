@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.Map;
  *         <li>{@link #queryUserInfo(FirestoreQueryCallback)}
  *         <li>{@link #queryUserInfo(int, FirestoreQueryCallback)}
  *         <li>{@link #queryClassInfo(FirestoreQueryCallback)}
- *         <li>{@link #queryUserInfo(int, FirestoreQueryCallback)}
+ *         <li>{@link #queryClassInfo(int, FirestoreQueryCallback)}
  *         <li>{@link #updateUserInfo(int, Map, FirestoreUpdateCallback)}
  *         <li>{@link #updateClassInfo(int, Map, FirestoreUpdateCallback)}
  *         <li>{@link #addClassToStudent(int, int, FirestoreUpdateCallback)}
@@ -620,6 +621,147 @@ public class CloudDatabaseHelper {
                                 .addOnFailureListener(e -> callback.onDeleteFailure(e));
                     } else {
                         Log.w("Firestore", "Class not found or error getting documents.", task.getException());
+                        callback.onDeleteFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * Inserts leave information into the database.
+     *
+     * @param studentId    The ID of the student.
+     * @param teacherId    The ID of the teacher.
+     * @param courseId     The ID of the course.
+     * @param isApproved   Approval status.
+     * @param leaveContent The content of the leave.
+     * @param leaveDate    The date of the leave.
+     * @param callback     A callback to handle the result of the operation.
+     * @see FirestoreInsertCallback
+     */
+    public void insertLeaveInfo(int studentId, int teacherId, int courseId, boolean isApproved,
+                                String leaveContent, Date leaveDate, FirestoreInsertCallback callback) {
+        Map<String, Object> leaveInfo = new HashMap<>();
+        leaveInfo.put("studentId", studentId);
+        leaveInfo.put("teacherId", teacherId);
+        leaveInfo.put("courseId", courseId);
+        leaveInfo.put("isApproved", isApproved);
+        leaveInfo.put("leaveContent", leaveContent);
+        leaveInfo.put("leaveDate", leaveDate);
+
+        db.collection("leaveInfo")
+                .add(leaveInfo)
+                .addOnSuccessListener(documentReference -> callback.onStoreSuccess())
+                .addOnFailureListener(e -> callback.onStoreFailure(e));
+    }
+
+    /**
+     * Queries leave information by student ID and course ID.
+     *
+     * @param studentId The ID of the student.
+     * @param courseId  The ID of the course.
+     * @param callback  A callback to handle the result of the query.
+     * @see FirestoreQueryCallback
+     */
+    public void queryLeaveInfoByStudent(int studentId, int courseId, FirestoreQueryCallback callback) {
+        db.collection("leaveInfo")
+                .whereEqualTo("studentId", studentId)
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Map<String, Object>> leaveList = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            leaveList.add(document.getData());
+                        }
+                        callback.onCallback(leaveList);
+                    } else {
+                        Log.w("Firestore", "Error getting documents.", task.getException());
+                        callback.onCallback(new ArrayList<>());
+                    }
+                });
+    }
+
+    /**
+     * Queries leave information by teacher ID and course ID.
+     *
+     * @param teacherId The ID of the teacher.
+     * @param courseId  The ID of the course.
+     * @param callback  A callback to handle the result of the query.
+     * @see FirestoreQueryCallback
+     */
+    public void queryLeaveInfoByTeacher(int teacherId, int courseId, FirestoreQueryCallback callback) {
+        db.collection("leaveInfo")
+                .whereEqualTo("teacherId", teacherId)
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Map<String, Object>> leaveList = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            leaveList.add(document.getData());
+                        }
+                        callback.onCallback(leaveList);
+                    } else {
+                        Log.w("Firestore", "Error getting documents.", task.getException());
+                        callback.onCallback(new ArrayList<>());
+                    }
+                });
+    }
+
+    /**
+     * Updates leave information by teacher ID and course ID.
+     *
+     * @param teacherId The ID of the teacher.
+     * @param courseId  The ID of the course.
+     * @param updates   The information to update, stored in a Map.
+     * @param callback  A callback to handle the result of the update operation.
+     * @see FirestoreUpdateCallback
+     */
+    public void updateLeaveInfo(int teacherId, int courseId, Map<String, Object> updates, FirestoreUpdateCallback callback) {
+        db.collection("leaveInfo")
+                .whereEqualTo("teacherId", teacherId)
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("leaveInfo")
+                                .document(docId)
+                                .update(updates)
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "Leave info not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * Deletes leave information by student ID, teacher ID, and course ID.
+     *
+     * @param studentId The ID of the student.
+     * @param teacherId The ID of the teacher.
+     * @param courseId  The ID of the course.
+     * @param callback  A callback to handle the result of the delete operation.
+     * @see FirestoreDeleteCallback
+     */
+    public void deleteLeaveInfo(int studentId, int teacherId, int courseId, FirestoreDeleteCallback callback) {
+        db.collection("leaveInfo")
+                .whereEqualTo("studentId", studentId)
+                .whereEqualTo("teacherId", teacherId)
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("leaveInfo")
+                                .document(docId)
+                                .delete()
+                                .addOnSuccessListener(aVoid -> callback.onDeleteSuccess())
+                                .addOnFailureListener(e -> callback.onDeleteFailure(e));
+                    } else {
+                        Log.w("Firestore", "Leave info not found or error getting documents.", task.getException());
                         callback.onDeleteFailure(task.getException());
                     }
                 });
