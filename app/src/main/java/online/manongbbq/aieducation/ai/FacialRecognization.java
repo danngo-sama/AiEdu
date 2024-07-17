@@ -76,7 +76,7 @@ public class FacialRecognization {
     private String generateRequestBody(String imageBase64_1, String imageBase64_2){
         return "{\n" +
                 "  \"header\": {\n" +
-                "    \"app_id\": \"your_app_id\",\n" +
+                "    \"app_id\": \"c72c8624\",\n" +
                 "    \"status\": 3\n" +
                 "  },\n" +
                 "  \"parameter\": {\n" +

@@ -138,21 +138,30 @@ public class WrongBookActivity extends AppCompatActivity {
                 if (!compressed) {
                     Log.e("analyzeMistakes", "Failed to compress image: " + imgPath);
                     Toast.makeText(this, "图片压缩失败: " + imgPath, Toast.LENGTH_SHORT).show();
-                    continue;
+                    //continue;
+                    return;
                 }
 
                 byte[] imageBytes = baos.toByteArray();
                 String imageBase64 = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                Log.d("Base64Image", imageBase64);//日志：查看64编码
+
+                Log.d("analyzeMistakes", "Base64 encoded image: " + imageBase64.substring(0, 100));//仅记录日志前100个字符
 
                 try {
-                    String text = imageToText.toText(imageBase64);
-                    combinedText.append(text).append("\n");
-                    Log.d("analyzeMistakes", "Image to text success: " + text);
+                    imageToText.toText(imageBase64, new ImageToText.OnTextResultListener() {
+                        @Override
+                        public void onResult(String text) {
+                            combinedText.append(text).append("\n");
+                            Log.d("analyzeMistakes", "Image to text success: " + text);
+                        }
+                    });
                 } catch (Exception e) {
                     Log.e("analyzeMistakes", "Image to text conversion failed for image: " + imgPath, e);
                     Toast.makeText(this, "图片识别失败: " + imgPath + " 错误信息: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     return;
                 }
+
             }
 
             if (combinedText.length() == 0) {

@@ -45,6 +45,8 @@ public class AiLeaveApproval {
             return false;
         }
 
+        askForLeave = "请判断以下请假理由是否合理，如果合理则回复\"批准\"，不合理则回复\"拒绝\"，请假理由如下：" + askForLeave;
+
         LLMOutput output = llm.run(askForLeave);
         if(output.getErrCode() == 0){
             Log.i(TAG, "Sync call: " + output.getRole() + ": " + output.getContent());
