@@ -1,9 +1,9 @@
 package online.manongbbq.aieducation.activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,83 +16,144 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import online.manongbbq.aieducation.R;
+import online.manongbbq.aieducation.data.CloudDatabaseHelper;
+import online.manongbbq.aieducation.data.FirestoreUpdateCallback;
+import online.manongbbq.aieducation.information.SessionManager;
 
 public class CourseActivityStu extends AppCompatActivity {
     private Spinner spinnerCourses;
     private Button buttonBack;
+    private CloudDatabaseHelper cloudDbHelper;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_stu);
         buttonBack = findViewById(R.id.buttonBack);
-
-        buttonBack.setOnClickListener(v -> finish());
-
         spinnerCourses = findViewById(R.id.spinnerCourses);
         ImageView imageViewMyCourse = findViewById(R.id.imageViewMyCourse);
         ImageView imageViewVoice = findViewById(R.id.imageViewVoice);
         ImageView imageViewAttendance = findViewById(R.id.imageViewAttendance);
         ImageView imageViewLeave = findViewById(R.id.imageViewLeave);
 
-        // Placeholder data for the spinner, replace with data from your database
-        String[] courses = {"课程1", "课程2", "课程3"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, courses);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCourses.setAdapter(adapter);
+        cloudDbHelper = new CloudDatabaseHelper();
+        sessionManager = new SessionManager(this);
 
-        spinnerCourses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedCourse = courses[position];
-                Toast.makeText(CourseActivityStu.this, "选中课程: " + selectedCourse, Toast.LENGTH_SHORT).show();
-            }
+        buttonBack.setOnClickListener(v -> finish());
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
+        loadCourses();
 
         imageViewMyCourse.setOnClickListener(v -> showJoinCourseDialog());
 
         imageViewVoice.setOnClickListener(v -> {
-            // Replace VoiceToTextActivity.class with the actual activity class
             Intent intent = new Intent(CourseActivityStu.this, VoiceToTextActivity.class);
             startActivity(intent);
         });
 
         imageViewAttendance.setOnClickListener(v -> {
-            // Replace AttendanceActivity.class with the actual activity class
             Intent intent = new Intent(CourseActivityStu.this, AttendanceActivityStu.class);
             startActivity(intent);
         });
 
         imageViewLeave.setOnClickListener(v -> {
-            // Replace LeaveActivity.class with the actual activity class
             Intent intent = new Intent(CourseActivityStu.this, LeaveActivityStu.class);
             startActivity(intent);
         });
     }
 
+    private void loadCourses() {
+        int userId = sessionManager.getUserId();
+        Log.d("CourseActivityStu", "Loading courses for userId: " + userId);
+
+        cloudDbHelper.queryUserInfo(userId, userList -> {
+            if (userList.isEmpty()) {
+                Log.d("CourseActivityStu", "没有用户信息");
+                runOnUiThread(() -> {
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"暂时没有课程"});
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerCourses.setAdapter(adapter);
+                });
+            } else {
+                Log.d("CourseActivityStu", "查找到用户信息");
+                List<?> rawClassIds = (List<?>) userList.get(0).get("classIds");
+                List<Integer> classIds = new ArrayList<>();
+                if (rawClassIds != null) {
+                    for (Object id : rawClassIds) {
+                        if (id instanceof Long) {
+                            classIds.add(((Long) id).intValue());
+                        } else if (id instanceof Integer) {
+                            classIds.add((Integer) id);
+                        }
+                    }
+                }
+                Log.d("CourseActivityStu", "Found classIds: " + classIds);
+
+                if (!classIds.isEmpty()) {
+                    Log.d("CourseActivityStu", "发现该用户有课程列表");
+                    List<String> courseNames = new ArrayList<>();
+                    for (int classId : classIds) {
+                        cloudDbHelper.queryClassInfo(classId, classList -> {
+                            if (!classList.isEmpty()) {
+                                String courseName = (String) classList.get(0).get("courseName");
+                                Log.d("CourseActivityStu", "Found courseName: " + courseName);
+                                if (courseName != null) {
+                                    courseNames.add(classId + " - " + courseName);
+                                }
+                            } else {
+                                Log.d("CourseActivityStu", "No class information found for classId: " + classId);
+                            }
+                            if (classId == classIds.get(classIds.size() - 1)) {
+                                runOnUiThread(() -> {
+                                    if (courseNames.isEmpty()) {
+                                        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"暂时没有课程"});
+                                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                        spinnerCourses.setAdapter(adapter);
+                                    } else {
+                                        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, courseNames);
+                                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                        spinnerCourses.setAdapter(adapter);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    Log.d("CourseActivityStu", "没有查找到用户的课程列表");
+                    runOnUiThread(() -> {
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"暂时没有课程"});
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinnerCourses.setAdapter(adapter);
+                    });
+                }
+            }
+        });
+    }
+
     private void showJoinCourseDialog() {
-        // 创建一个AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("加入课堂");
 
-        // 设置对话框布局
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_join_course, null);
         builder.setView(dialogView);
 
         final EditText editTextCourseId = dialogView.findViewById(R.id.editTextCourseId);
 
-        // 设置对话框按钮
         builder.setPositiveButton("提交", (dialog, which) -> {
-            String courseId = editTextCourseId.getText().toString();
-            // 处理加入班级申请的逻辑
-            submitJoinCourseRequest(courseId);
+            String courseIdStr = editTextCourseId.getText().toString().trim();
+            if (!courseIdStr.isEmpty()) {
+                int courseId = Integer.parseInt(courseIdStr);
+                joinCourse(courseId);
+            } else {
+                Toast.makeText(CourseActivityStu.this, "请输入课程ID", Toast.LENGTH_SHORT).show();
+            }
         });
 
         builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
@@ -100,9 +161,69 @@ public class CourseActivityStu extends AppCompatActivity {
         builder.create().show();
     }
 
-    private void submitJoinCourseRequest(String courseId) {
-        // 在这里添加加入班级申请的逻辑
-        // 例如，向服务器发送请求以加入班级
-        Toast.makeText(this, "提交加入班级申请: " + courseId, Toast.LENGTH_SHORT).show();
+    private void joinCourse(int courseId) {
+        int userId = sessionManager.getUserId();
+        cloudDbHelper.queryUserInfo(userId, userList -> {
+            if (!userList.isEmpty()) {
+                List<Integer> classIds = (List<Integer>) userList.get(0).get("classIds");
+                if (classIds == null) {
+                    classIds = new ArrayList<>();
+                }
+                if (!classIds.contains(courseId)) {
+                    classIds.add(courseId);
+                    Map<String, Object> userUpdates = new HashMap<>();
+                    userUpdates.put("classIds", classIds);
+                    cloudDbHelper.updateUserInfo(userId, userUpdates, new FirestoreUpdateCallback() {
+                        @Override
+                        public void onUpdateSuccess() {
+                            Log.d("CourseActivityStu", "用户课程列表更新成功");
+
+                            // 现在更新课程的学生列表
+                            cloudDbHelper.queryClassInfo(courseId, classList -> {
+                                if (!classList.isEmpty()) {
+                                    List<Integer> studentIds = (List<Integer>) classList.get(0).get("studentIds");
+                                    if (studentIds == null) {
+                                        studentIds = new ArrayList<>();
+                                    }
+                                    if (!studentIds.contains(userId)) {
+                                        studentIds.add(userId);
+                                        Map<String, Object> classUpdates = new HashMap<>();
+                                        classUpdates.put("studentIds", studentIds);
+                                        cloudDbHelper.updateClassInfo(courseId, classUpdates, new FirestoreUpdateCallback() {
+                                            @Override
+                                            public void onUpdateSuccess() {
+                                                Log.d("CourseActivityStu", "课程学生列表更新成功");
+                                                runOnUiThread(() -> {
+                                                    Toast.makeText(CourseActivityStu.this, "成功加入课程: " + courseId, Toast.LENGTH_SHORT).show();
+                                                    loadCourses(); // Refresh the course list
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onUpdateFailure(Exception e) {
+                                                Log.d("CourseActivityStu", "课程学生列表更新失败: " + e.getMessage());
+                                                runOnUiThread(() -> Toast.makeText(CourseActivityStu.this, "加入课程失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                            }
+                                        });
+                                    } else {
+                                        runOnUiThread(() -> Toast.makeText(CourseActivityStu.this, "你已在该课程的学生列表中", Toast.LENGTH_SHORT).show());
+                                    }
+                                } else {
+                                    runOnUiThread(() -> Toast.makeText(CourseActivityStu.this, "找不到课程信息", Toast.LENGTH_SHORT).show());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onUpdateFailure(Exception e) {
+                            Log.d("CourseActivityStu", "用户课程列表更新失败: " + e.getMessage());
+                            runOnUiThread(() -> Toast.makeText(CourseActivityStu.this, "加入课程失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        }
+                    });
+                } else {
+                    runOnUiThread(() -> Toast.makeText(CourseActivityStu.this, "你已加入该课程", Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
     }
 }

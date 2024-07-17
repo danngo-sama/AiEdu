@@ -34,6 +34,7 @@ public class LoginHelper {
                 Long storedPassword = (Long) user.get("password");
 
                 if (storedPassword != null && storedPassword == password) {
+                    Log.d("LoginHelper", "登录成功");
                     callback.onLoginResult(true);
                 } else {
                     Log.d("LoginHelper", "Password mismatch");

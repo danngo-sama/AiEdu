@@ -38,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
         // 检查是否已经登录
         if (sessionManager.isLoggedIn()) {
-            navigateToHomepage();
+            if (sessionManager.isStudent()) {
+                navigateToHomepage();
+            } else {
+                navigateToHomepageTe();
+            }
         }
 
         editTextUserId = findViewById(R.id.edit_text);
@@ -61,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                     loginHelper.login(userId, password, success -> {
                         if (success) {
                             // 保存用户凭据
-                            sessionManager.saveUserCredentials(userId, password);
+                            sessionManager.saveUserCredentials(userId, password,!switchIsTeacher.isChecked());
 
                             // 检查Switch是否未选中
                             if (!switchIsTeacher.isChecked()) {

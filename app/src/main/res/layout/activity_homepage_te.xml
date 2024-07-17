@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.HomepageStuActivity">
+    tools:context=".activity.HomepageTeActivity">
 
     <FrameLayout
         android:id="@+id/frame_layout"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
 
         android:background="@color/light_blue"
-        app:menu="@menu/bottom_nav_menu_stu"
+        app:menu="@menu/bottom_nav_menu_te"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
