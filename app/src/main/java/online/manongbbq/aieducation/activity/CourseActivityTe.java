@@ -216,15 +216,13 @@ public class CourseActivityTe extends AppCompatActivity {
                                 leave.put("isApproved", true);
 
                                 int studentId = getIntegerValue(leave.get("studentId"));
-                                int teacherId = getIntegerValue(leave.get("teacherId"));
+                                int teacherId = getIntegerValue(sessionManager.getUserId());
                                 int courseId = getIntegerValue(leave.get("courseId"));
-                                String leaveContent = (String) leave.get("leaveContent");
-                                Object leaveDate = leave.get("leaveDate");
 
                                 Map<String, Object> updates = new HashMap<>();
                                 updates.put("isApproved", true);
 
-                                cloudDbHelper.updateLeaveInfo(teacherId, courseId, updates, new FirestoreUpdateCallback() {
+                                cloudDbHelper.updateLeaveInfo(studentId, teacherId, courseId, updates, new FirestoreUpdateCallback() {
                                     @Override
                                     public void onUpdateSuccess() {
                                         runOnUiThread(() -> {
@@ -247,8 +245,6 @@ public class CourseActivityTe extends AppCompatActivity {
         }
     }
     private void aiApproveLeave(LinearLayout layout, List<Map<String, Object>> leaveInfoList) {
-        AiLeaveApproval aiLeaveApproval = new AiLeaveApproval(this);
-
         for (int i = 0; i < layout.getChildCount(); i++) {
             View child = layout.getChildAt(i);
             if (child instanceof LinearLayout) {
@@ -274,15 +270,13 @@ public class CourseActivityTe extends AppCompatActivity {
                                 leave.put("isApproved", true);
 
                                 int studentId = getIntegerValue(leave.get("studentId"));
-                                int teacherId = getIntegerValue(leave.get("teacherId"));
+                                int teacherId = getIntegerValue(sessionManager.getUserId());
                                 int courseId = getIntegerValue(leave.get("courseId"));
-                                String leaveContent = (String) leave.get("leaveContent");
-                                Object leaveDate = leave.get("leaveDate");
 
                                 Map<String, Object> updates = new HashMap<>();
                                 updates.put("isApproved", true);
 
-                                cloudDbHelper.updateLeaveInfo(teacherId, courseId, updates, new FirestoreUpdateCallback() {
+                                cloudDbHelper.updateLeaveInfo(studentId, teacherId, courseId, updates, new FirestoreUpdateCallback() {
                                     @Override
                                     public void onUpdateSuccess() {
                                         runOnUiThread(() -> {
