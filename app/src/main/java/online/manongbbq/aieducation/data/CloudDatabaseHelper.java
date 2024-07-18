@@ -737,6 +737,27 @@ public class CloudDatabaseHelper {
                 });
     }
 
+    public void updateLeaveInfo(int studentId, int teacherId, int courseId, Map<String, Object> updates, FirestoreUpdateCallback callback) {
+        db.collection("leaveInfo")
+                .whereEqualTo("studentId", studentId)
+                .whereEqualTo("teacherId", teacherId)
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String docId = task.getResult().getDocuments().get(0).getId();
+                        db.collection("leaveInfo")
+                                .document(docId)
+                                .update(updates)
+                                .addOnSuccessListener(aVoid -> callback.onUpdateSuccess())
+                                .addOnFailureListener(e -> callback.onUpdateFailure(e));
+                    } else {
+                        Log.w("Firestore", "Leave info not found or error getting documents.", task.getException());
+                        callback.onUpdateFailure(task.getException());
+                    }
+                });
+    }
+
     /**
      * Deletes leave information by student ID, teacher ID, and course ID.
      *
