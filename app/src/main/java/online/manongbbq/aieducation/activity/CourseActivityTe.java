@@ -32,6 +32,7 @@ import java.util.Map;
 
 import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.ai.AiLeaveApproval;
+import online.manongbbq.aieducation.ai.RobotAssistant;
 import online.manongbbq.aieducation.data.CloudDatabaseHelper;
 import online.manongbbq.aieducation.data.FirestoreInsertCallback;
 import online.manongbbq.aieducation.data.FirestoreUpdateCallback;
@@ -44,6 +45,8 @@ public class CourseActivityTe extends AppCompatActivity {
     private SessionManager sessionManager;
 
     private int selectedCourseId;
+
+    private RobotAssistant robotAssistant;
 
 
     @Override
@@ -59,6 +62,8 @@ public class CourseActivityTe extends AppCompatActivity {
 
         cloudDbHelper = new CloudDatabaseHelper();
         sessionManager = new SessionManager(this);
+
+        robotAssistant = new RobotAssistant(this);
 
         buttonBack.setOnClickListener(v -> finish());
 
@@ -193,74 +198,112 @@ public class CourseActivityTe extends AppCompatActivity {
 
     private void approveSelectedLeave(LinearLayout layout) {
         for (int i = 0; i < layout.getChildCount(); i++) {
-            LinearLayout leaveItemLayout = (LinearLayout) layout.getChildAt(i);
-            CheckBox leaveCheckBox = (CheckBox) leaveItemLayout.getChildAt(0);
-            if (leaveCheckBox.isChecked()) {
-                Map<String, Object> leave = (Map<String, Object>) leaveCheckBox.getTag();
-                if (leave != null && !((boolean) leave.get("isApproved"))) {
-                    leave.put("isApproved", true);
+            View child = layout.getChildAt(i);
+            if (child instanceof LinearLayout) {
+                LinearLayout leaveItemLayout = (LinearLayout) child;
 
-                    int teacherId = getIntegerValue(leave.get("teacherId"));
-                    int courseId = getIntegerValue(leave.get("courseId"));
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("isApproved", true);
+                if (leaveItemLayout.getChildCount() > 1) {
+                    View firstChild = leaveItemLayout.getChildAt(0);
+                    View secondChild = leaveItemLayout.getChildAt(1);
 
-                    cloudDbHelper.updateLeaveInfo(teacherId, courseId, updates, new FirestoreUpdateCallback() {
-                        @Override
-                        public void onUpdateSuccess() {
-                            runOnUiThread(() -> {
-                                leaveCheckBox.setEnabled(false);
-                                TextView leaveTextView = (TextView) leaveItemLayout.getChildAt(1);
-                                leaveTextView.setTextColor(Color.GREEN);
-                                leaveTextView.setText(leaveTextView.getText().toString().replace("暂未批准", "已批准"));
-                            });
+                    if (firstChild instanceof CheckBox && secondChild instanceof TextView) {
+                        CheckBox leaveCheckBox = (CheckBox) firstChild;
+                        TextView leaveTextView = (TextView) secondChild;
+
+                        if (leaveCheckBox.isChecked()) {
+                            Map<String, Object> leave = (Map<String, Object>) leaveCheckBox.getTag();
+                            if (leave != null && !((boolean) leave.get("isApproved"))) {
+                                leave.put("isApproved", true);
+
+                                int studentId = getIntegerValue(leave.get("studentId"));
+                                int teacherId = getIntegerValue(leave.get("teacherId"));
+                                int courseId = getIntegerValue(leave.get("courseId"));
+                                String leaveContent = (String) leave.get("leaveContent");
+                                Object leaveDate = leave.get("leaveDate");
+
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("isApproved", true);
+
+                                cloudDbHelper.updateLeaveInfo(teacherId, courseId, updates, new FirestoreUpdateCallback() {
+                                    @Override
+                                    public void onUpdateSuccess() {
+                                        runOnUiThread(() -> {
+                                            leaveCheckBox.setEnabled(false);
+                                            leaveTextView.setTextColor(Color.GREEN);
+                                            leaveTextView.setText(leaveTextView.getText().toString().replace("暂未批准", "已批准"));
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onUpdateFailure(Exception e) {
+                                        runOnUiThread(() -> Toast.makeText(CourseActivityTe.this, "批假失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                    }
+                                });
+                            }
                         }
-
-                        @Override
-                        public void onUpdateFailure(Exception e) {
-                            runOnUiThread(() -> Toast.makeText(CourseActivityTe.this, "批假失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                        }
-                    });
+                    }
                 }
             }
         }
     }
-
     private void aiApproveLeave(LinearLayout layout, List<Map<String, Object>> leaveInfoList) {
         AiLeaveApproval aiLeaveApproval = new AiLeaveApproval(this);
 
         for (int i = 0; i < layout.getChildCount(); i++) {
-            TextView leaveTextView = (TextView) layout.getChildAt(i);
-            Map<String, Object> leave = (Map<String, Object>) leaveTextView.getTag();
-            if (leave != null && !((boolean) leave.get("isApproved"))) {
-                boolean isApproved = aiLeaveApproval.getApproval((String) leave.get("leaveContent"));
-                if (isApproved) {
-                    leave.put("isApproved", true);
+            View child = layout.getChildAt(i);
+            if (child instanceof LinearLayout) {
+                LinearLayout leaveItemLayout = (LinearLayout) child;
 
-                    int teacherId = (int) leave.get("teacherId");
-                    int courseId = (int) leave.get("courseId");
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("isApproved", true);
+                if (leaveItemLayout.getChildCount() > 1) {
+                    View firstChild = leaveItemLayout.getChildAt(0);
+                    View secondChild = leaveItemLayout.getChildAt(1);
 
-                    cloudDbHelper.updateLeaveInfo(teacherId, courseId, updates, new FirestoreUpdateCallback() {
-                        @Override
-                        public void onUpdateSuccess() {
-                            runOnUiThread(() -> {
-                                leaveTextView.setTextColor(Color.GREEN);
-                                leaveTextView.setText(leaveTextView.getText().toString().replace("暂未批准", "已批准"));
-                            });
+                    if (firstChild instanceof CheckBox && secondChild instanceof TextView) {
+                        CheckBox leaveCheckBox = (CheckBox) firstChild;
+                        TextView leaveTextView = (TextView) secondChild;
+
+                        Map<String, Object> leave = (Map<String, Object>) leaveCheckBox.getTag();
+                        if (leave != null && !((boolean) leave.get("isApproved"))) {
+                            String text2 = "现在假如你是一个大学老师，你要以作为一个老师的标准，我下面会给你一个学生的请假理由，你来分析这个理由合不合理。你必须要秉持老师的标准，不是正当事物不可以准假。特别记住，你只作批准和拒绝两个回答，你回答我时只需回答这两个词语中的一个，不许回答其他内容，你给我的回答仅限于这两个词语\n";
+                            String text3 = (String) leave.get("leaveContent");
+                            String Text = text2 + text3;
+                            String decisionResult = robotAssistant.getAnswer(Text);
+                            boolean resu = decisionResult.contains("批准");
+                            boolean isApproved = resu;
+                            if (isApproved) {
+                                leave.put("isApproved", true);
+
+                                int studentId = getIntegerValue(leave.get("studentId"));
+                                int teacherId = getIntegerValue(leave.get("teacherId"));
+                                int courseId = getIntegerValue(leave.get("courseId"));
+                                String leaveContent = (String) leave.get("leaveContent");
+                                Object leaveDate = leave.get("leaveDate");
+
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("isApproved", true);
+
+                                cloudDbHelper.updateLeaveInfo(teacherId, courseId, updates, new FirestoreUpdateCallback() {
+                                    @Override
+                                    public void onUpdateSuccess() {
+                                        runOnUiThread(() -> {
+                                            leaveCheckBox.setEnabled(false);
+                                            leaveTextView.setTextColor(Color.GREEN);
+                                            leaveTextView.setText(leaveTextView.getText().toString().replace("暂未批准", "已批准"));
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onUpdateFailure(Exception e) {
+                                        runOnUiThread(() -> Toast.makeText(CourseActivityTe.this, "AI批假失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                    }
+                                });
+                            }
                         }
-
-                        @Override
-                        public void onUpdateFailure(Exception e) {
-                            runOnUiThread(() -> Toast.makeText(CourseActivityTe.this, "AI批假失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                        }
-                    });
+                    }
                 }
             }
         }
     }
-
 
     private void showStudentListDialog() {
         if (selectedCourseId == -1) {
