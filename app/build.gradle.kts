@@ -48,6 +48,17 @@ repositories {
 }
 
 dependencies {
+    // Apache HttpComponents for MultipartEntityBuilder and related classes
+    implementation("org.apache.httpcomponents:httpmime:4.5.13")
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+
+    // SLF4J for logging
+    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation("org.slf4j:slf4j-simple:1.7.36")
+
+    implementation("commons-lang:commons-lang:2.6")
+    implementation("cn.hutool:hutool-all:5.8.11")
+    implementation("com.google.code.gson:gson:2.8.9")
     implementation("androidx.appcompat:appcompat:1.4.0")
     implementation("com.google.android.material:material:1.6.0")
     implementation("androidx.activity:activity:1.4.0")
