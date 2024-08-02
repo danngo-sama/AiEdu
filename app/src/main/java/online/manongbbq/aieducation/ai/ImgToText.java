@@ -29,10 +29,10 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * <p>Activity一定要实现{@link ImageToText.OnTextResultListener}接口</p>
+ * <p>Activity一定要实现{@link ImgToText.OnTextResultListener}接口</p>
  * <p><strong>eg:</strong></p>
  * <pre>
- * public class MainActivity extends AppCompatActivity implements ImageToText.OnTextResultListener {
+ * public class MainActivity extends AppCompatActivity implements ImgToText.OnTextResultListener {
  *
  *     private static final String TAG = "MainActivity";
  *     private ImageToText imageToText;
