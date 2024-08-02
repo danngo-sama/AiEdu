@@ -1,39 +1,68 @@
 package online.manongbbq.aieducation.activity;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.loader.content.CursorLoader;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import cn.hutool.json.JSONUtil;
 import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.ai.AiSummary;
 import online.manongbbq.aieducation.ai.RobotAssistant;
+//import online.manongbbq.aieducation.ai.VoiceToText.AudioUploadTask;
+import online.manongbbq.aieducation.ai.VoiceToText.Ifasrdemo;
+
+
 
 public class VoiceToTextActivity extends AppCompatActivity {
 
     private static final String TAG = "VoiceToTextActivity";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private static final String AUDIO_FILE_PATH = "/sdcard/recorded_audio.3gp";
+    private static final int REQUEST_CODE_RECORD_AUDIO = 400;
 
-    private MediaRecorder mediaRecorder;
+    private TextView textViewDebug;
+
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
     private TextView textViewResult;
@@ -52,16 +81,16 @@ public class VoiceToTextActivity extends AppCompatActivity {
         Button buttonBack = findViewById(R.id.buttonBack);
         Button buttonAiSummary = findViewById(R.id.buttonAiSummary);
         Button buttonVoiceToText = findViewById(R.id.buttonVoiceToText);
-        Button buttonStopRecording = findViewById(R.id.buttonStopRecording);
         textViewResult = findViewById(R.id.textViewResult);
 
         buttonBack.setOnClickListener(v -> finish());
 
         buttonAiSummary.setOnClickListener(v -> showAiSummary());
 
-        buttonVoiceToText.setOnClickListener(v -> startVoiceRecognition());
+        buttonVoiceToText.setOnClickListener(v -> startVoiceRecording());
 
         setupSpeechRecognizer();
+
 
         robotAssistant = new RobotAssistant(this);
     }
@@ -107,7 +136,7 @@ public class VoiceToTextActivity extends AppCompatActivity {
 
             @Override
             public void onError(int error) {
-                handleSpeechRecognizerError(error);
+
             }
 
             @Override
@@ -137,25 +166,204 @@ public class VoiceToTextActivity extends AppCompatActivity {
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
     }
 
-    private void startVoiceRecognition() {
-        try {
-            speechRecognizer.startListening(recognizerIntent);
-            Log.d(TAG, "Started listening.");
-        } catch (Exception e) {
-            Toast.makeText(this, "语音识别不可用", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Speech recognition is not available.", e);
+    private void startVoiceRecording() {
+        Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+        startActivityForResult(intent, REQUEST_CODE_RECORD_AUDIO);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_RECORD_AUDIO && resultCode == RESULT_OK) {
+            Uri audioUri = data.getData();
+            if (audioUri != null) {
+                convertAudioToText(audioUri);
+            }
         }
     }
 
-    private void stopVoiceRecognition() {
+
+
+
+    private void convertAudioToText(Uri audioUri) {
+//        // 检查音频 URI
+//        if (audioUri == null) {
+//            appendDebugLog("音频 URI 为 null");
+//            return;
+//        }
+//
+//        // 确保 Context 有效
+//        if (this == null) {
+//            appendDebugLog("Context 为 null");
+//            return;
+//        }
+
+        // 方法级别声明 executor 和 handler
+        ExecutorService executor;
+        Handler handler;
+
         try {
-            speechRecognizer.stopListening();
-            Log.d(TAG, "Stopped listening.");
+            executor = Executors.newSingleThreadExecutor();
+            handler = new Handler(Looper.getMainLooper());
         } catch (Exception e) {
-            Toast.makeText(this, "无法停止语音识别", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Failed to stop speech recognition.", e);
+//            appendDebugLog("ExecutorService 创建失败: " + e.getMessage());
+            return;
         }
+
+        // 打印步骤0日志
+//        appendDebugLog("步骤0: 准备进入后台线程");
+
+        executor.execute(() -> {
+            try {
+                // 将音频文件保存到本地
+                String audioFilePath = saveAudioFileLocally(audioUri);
+//                handler.post(() -> appendDebugLog("步骤2: 音频文件保存成功: " + audioFilePath));
+
+                // 上传音频文件
+                String uploadResponse = Ifasrdemo.upload(this, audioFilePath);
+                if (uploadResponse == null) {
+//                    handler.post(() -> appendDebugLog("上传响应为null"));
+                    return;
+                }
+
+//                handler.post(() -> appendDebugLog("步骤3: 上传响应成功: " + uploadResponse));
+
+                // 解析 orderId
+                String jsonStr = StringEscapeUtils.unescapeJavaScript(uploadResponse);
+                String orderId = String.valueOf(JSONUtil.getByPath(JSONUtil.parse(jsonStr), "content.orderId"));
+
+                if (orderId == null || orderId.isEmpty()) {
+//                    handler.post(() -> appendDebugLog("解析 orderId 失败: " + uploadResponse));
+                    return;
+                }
+
+//                appendDebugLog("步骤4");
+
+                // 获取识别结果
+                try {
+//                    appendDebugLog("步骤5");
+                    String result = Ifasrdemo.getResult(this, orderId);
+//                    appendDebugLog("步骤6");
+                    String recognizedText = parseRecognizedText(result);
+//                    appendDebugLog("步骤7");
+                    handler.post(() -> {
+                        if (recognizedText != null) {
+                            textViewResult.append(recognizedText + "\n");
+//                            appendDebugLog("识别结果成功: " + recognizedText);
+                        }
+                    });
+                } catch (SignatureException e) {
+//                    handler.post(() -> appendDebugLog("获取识别结果失败: 签名错误"));
+                } catch (InterruptedException e) {
+//                    handler.post(() -> appendDebugLog("获取识别结果失败: 任务被中断"));
+                    Thread.currentThread().interrupt(); // 重新设置线程中断状态
+                } catch (IOException e) {
+//                    handler.post(() -> appendDebugLog("获取识别结果失败: 网络错误"));
+                }
+
+            } catch (Exception e) {
+//                handler.post(() -> appendDebugLog("上传失败: " + e.getClass().getName() + ": " + e.getMessage()));
+            }
+        });
     }
+
+
+    private String saveAudioFileLocally(Uri audioUri) throws IOException {
+        ContentResolver contentResolver = getContentResolver();
+        String fileName = getFileName(audioUri);
+
+        File audioFile = new File(getExternalFilesDir(Environment.DIRECTORY_MUSIC), fileName);
+        try (InputStream inputStream = contentResolver.openInputStream(audioUri);
+             OutputStream outputStream = new FileOutputStream(audioFile)) {
+            if (inputStream == null) {
+//                appendDebugLog("无法打开音频文件流");
+                throw new IOException("无法打开音频文件");
+            }
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
+
+        if (!audioFile.exists() || audioFile.length() == 0) {
+//            appendDebugLog("音频文件保存失败");
+            throw new IOException("音频文件保存失败");
+        }
+
+//        appendDebugLog("音频文件路径: " + audioFile.getAbsolutePath());
+        return audioFile.getAbsolutePath();
+    }
+
+
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    result = cursor.getString(index);
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result;
+    }
+
+
+    private String parseRecognizedText(String jsonString) {
+        // 初始化一个StringBuilder来存储转写内容
+        StringBuilder transcriptBuilder = new StringBuilder();
+
+        try {
+            // 将字符串解析为JSON对象
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            // 定位到“orderResult”部分并将其解析为JSON对象
+            JSONObject contentObject = jsonObject.getJSONObject("content");
+            JSONObject orderResultObject = new JSONObject(contentObject.getString("orderResult"));
+
+            // 从"lattice"数组中提取转写文本
+            JSONArray latticeArray = orderResultObject.getJSONArray("lattice");
+
+            // 遍历lattice数组中的每个元素
+            for (int i = 0; i < latticeArray.length(); i++) {
+                JSONObject latticeObject = latticeArray.getJSONObject(i);
+                JSONObject json1BestObject = new JSONObject(latticeObject.getString("json_1best"));
+                JSONObject stObject = json1BestObject.getJSONObject("st");
+                JSONArray rtArray = stObject.getJSONArray("rt");
+
+                // 遍历每个rt数组中的ws数组
+                for (int j = 0; j < rtArray.length(); j++) {
+                    JSONObject rtObject = rtArray.getJSONObject(j);
+                    JSONArray wsArray = rtObject.getJSONArray("ws");
+
+                    // 提取每个ws数组中的cw数组中的w字段值
+                    for (int k = 0; k < wsArray.length(); k++) {
+                        JSONObject wsObject = wsArray.getJSONObject(k);
+                        JSONArray cwArray = wsObject.getJSONArray("cw");
+
+                        // 连接所有的w字段值到transcriptBuilder
+                        for (int l = 0; l < cwArray.length(); l++) {
+                            JSONObject cwObject = cwArray.getJSONObject(l);
+                            transcriptBuilder.append(cwObject.getString("w"));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 在异常情况下返回错误信息
+            return "解析失败: " + e.getMessage();
+        }
+
+        // 返回构建好的转写文本
+        return transcriptBuilder.toString();
+    }
+
 
     private void showAiSummary() {
         String text = textViewResult.getText().toString();
@@ -177,60 +385,8 @@ public class VoiceToTextActivity extends AppCompatActivity {
                 .create()
                 .show();
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (speechRecognizer != null) {
-            speechRecognizer.destroy();
-        }
-        if (mediaRecorder != null) {
-            mediaRecorder.release();
-            mediaRecorder = null;
-        }
-    }
-
-    private void handleSpeechRecognizerError(int error) {
-        Log.d(TAG, "onError: " + error);
-        String errorMessage;
-        switch (error) {
-            case SpeechRecognizer.ERROR_AUDIO:
-                errorMessage = "音频问题";
-                break;
-            case SpeechRecognizer.ERROR_CLIENT:
-                errorMessage = "客户端错误";
-                break;
-            case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
-                errorMessage = "权限不足";
-                break;
-            case SpeechRecognizer.ERROR_NETWORK:
-                errorMessage = "网络错误";
-                break;
-            case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
-                errorMessage = "网络超时";
-                break;
-            case SpeechRecognizer.ERROR_NO_MATCH:
-                errorMessage = "没有匹配";
-                break;
-            case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-                errorMessage = "识别服务忙";
-                break;
-            case SpeechRecognizer.ERROR_SERVER:
-                errorMessage = "服务错误";
-                break;
-            case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-                errorMessage = "没有语音输入";
-                break;
-            default:
-                errorMessage = "未知错误";
-                break;
-        }
-        Toast.makeText(VoiceToTextActivity.this, "语音识别出错: " + errorMessage, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "Stopping recognition due to error: " + errorMessage);
-
-        // 如果错误是识别器繁忙，添加延迟后重启识别器
-        if (error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY) {
-            new Handler().postDelayed(this::startVoiceRecognition, 1000);
-        }
-    }
 }
+
+
+
+

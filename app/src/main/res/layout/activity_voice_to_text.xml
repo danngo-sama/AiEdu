@@ -6,6 +6,8 @@
     android:background="@drawable/bg9"
     tools:context=".activity.VoiceToTextActivity">
 
+
+
     <Button
         android:id="@+id/buttonBack"
         android:layout_width="wrap_content"
@@ -34,7 +36,7 @@
         android:layout_margin="16dp"/>
 
     <Button
-        android:id="@+id/buttonTestConversion"
+        android:id="@+id/buttonStopRecording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="测试api"
@@ -47,8 +49,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="识别结果"
-        android:layout_below="@id/buttonTestConversion"
+        android:layout_below="@id/buttonStopRecording"
         android:layout_margin="16dp"
         android:textSize="18sp"/>
+
+
+
+
+
 
 </RelativeLayout>

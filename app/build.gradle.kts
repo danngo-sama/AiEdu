@@ -51,6 +51,7 @@ dependencies {
     // Apache HttpComponents for MultipartEntityBuilder and related classes
     implementation("org.apache.httpcomponents:httpmime:4.5.13")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
 
     // SLF4J for logging
     implementation("org.slf4j:slf4j-api:1.7.36")
@@ -65,7 +66,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.0")
 
     implementation("com.alibaba:fastjson:1.2.78")
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
     implementation("androidx.fragment:fragment:1.4.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
