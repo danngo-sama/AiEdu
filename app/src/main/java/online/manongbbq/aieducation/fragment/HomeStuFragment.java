@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,22 +43,29 @@ public class HomeStuFragment extends Fragment {
         ImageView imageView5 = view.findViewById(R.id.imageView5);
         ImageView imageView6 = view.findViewById(R.id.imageView6);
 
+
+
         imageView3.setOnClickListener(v -> {
+            v.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.scale));
+
             Intent intent = new Intent(getActivity(), CourseActivityStu.class);
             startActivity(intent);
         });
 
         imageView4.setOnClickListener(v -> {
+            v.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.scale));
             Intent intent = new Intent(getActivity(), WrongBookActivity.class);
             startActivity(intent);
         });
 
         imageView5.setOnClickListener(v -> {
+            v.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.scale));
             Intent intent = new Intent(getActivity(), ChatActivity.class);
             startActivity(intent);
         });
 
         imageView6.setOnClickListener(v -> {
+            v.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.scale));
             Intent intent = new Intent(getActivity(), ReportActivityStu.class);
             startActivity(intent);
         });

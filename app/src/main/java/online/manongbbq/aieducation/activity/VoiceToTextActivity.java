@@ -248,7 +248,7 @@ public class VoiceToTextActivity extends AppCompatActivity {
 //                    appendDebugLog("步骤7");
                     handler.post(() -> {
                         if (recognizedText != null) {
-                            textViewResult.append(recognizedText + "\n");
+                            textViewResult.append("\n"+recognizedText);
 //                            appendDebugLog("识别结果成功: " + recognizedText);
                         }
                     });
@@ -367,7 +367,7 @@ public class VoiceToTextActivity extends AppCompatActivity {
 
     private void showAiSummary() {
         String text = textViewResult.getText().toString();
-        if (text.isEmpty()) {
+        if (text.equals("课堂内容")) {
             Toast.makeText(this, "请先进行语音转文字", Toast.LENGTH_SHORT).show();
             return;
         }

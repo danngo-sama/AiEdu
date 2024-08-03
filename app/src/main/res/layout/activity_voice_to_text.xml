@@ -6,8 +6,7 @@
     android:background="@drawable/bg9"
     tools:context=".activity.VoiceToTextActivity">
 
-
-
+    <!-- Back Button -->
     <Button
         android:id="@+id/buttonBack"
         android:layout_width="wrap_content"
@@ -15,8 +14,14 @@
         android:text="返回"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@android:color/white"
+        android:elevation="4dp"
+        android:padding="8dp"
+        android:background="@drawable/button_background"/>
 
+    <!-- AI Summary Button -->
     <Button
         android:id="@+id/buttonAiSummary"
         android:layout_width="wrap_content"
@@ -24,38 +29,44 @@
         android:text="AI总结"
         android:layout_below="@id/buttonBack"
         android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@android:color/white"
+        android:elevation="4dp"
+        android:padding="8dp"
+        android:background="@drawable/button_background"/>
 
+    <!-- Voice To Text Button -->
     <Button
         android:id="@+id/buttonVoiceToText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="开始录音"
+        android:text="开始识别"
         android:layout_below="@id/buttonAiSummary"
         android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
-
-    <Button
-        android:id="@+id/buttonStopRecording"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="测试api"
-        android:layout_below="@id/buttonVoiceToText"
-        android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
-
-    <TextView
-        android:id="@+id/textViewResult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="识别结果"
-        android:layout_below="@id/buttonStopRecording"
         android:layout_margin="16dp"
-        android:textSize="18sp"/>
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@android:color/white"
+        android:elevation="4dp"
+        android:padding="8dp"
+        android:background="@drawable/button_background"/>
 
+    <!-- Scrollable TextView for Results -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/buttonVoiceToText"
+        android:layout_margin="16dp">
 
-
-
-
+        <TextView
+            android:id="@+id/textViewResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="课堂内容"
+            android:textSize="18sp"
+            android:padding="8dp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/textview_background"/>
+    </ScrollView>
 
 </RelativeLayout>

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,9 @@ public class WrBoDatabaseOperations extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "wrongbook.db";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_NAME = "errorbook";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_IMG_PATH = "img_path";
-    private static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_IMG_PATH = "img_path";
+    public static final String COLUMN_DESCRIPTION = "description";
 
     public WrBoDatabaseOperations(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -41,6 +42,21 @@ public class WrBoDatabaseOperations extends SQLiteOpenHelper {
     }
 
     public void insertErrorBook(String imgPath, String description) {
+        if (imgPath == null || imgPath.isEmpty()) {
+            throw new IllegalArgumentException("图片路径不能为空");
+        }
+        // 检查路径是否有效
+        File imgFile = new File(imgPath);
+        if (!imgFile.exists()) {
+            throw new IllegalArgumentException("图片路径无效，文件不存在: " + imgPath);
+        }
+
+        // 检查 imgPath 是否为绝对路径
+        if (!imgPath.startsWith("/")) {
+            throw new IllegalArgumentException("图片路径不是绝对路径: " + imgPath);
+        }
+
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_IMG_PATH, imgPath);
@@ -48,6 +64,16 @@ public class WrBoDatabaseOperations extends SQLiteOpenHelper {
         db.insert(TABLE_NAME, null, values);
         db.close();
     }
+
+
+    public boolean deleteErrorBook(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return rowsDeleted > 0;
+    }
+
+
 
     public List<JSONObject> queryErrorBook() throws JSONException {
         List<JSONObject> data = new ArrayList<>();
