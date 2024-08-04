@@ -74,7 +74,7 @@ public class CourseActivityTe extends AppCompatActivity {
         imageViewStuList.setOnClickListener(v -> showStudentListDialog());
 
         imageViewAttendance.setOnClickListener(v -> {
-            Intent intent = new Intent(CourseActivityTe.this, AttendanceActivityTe.class);
+            Intent intent = new Intent(CourseActivityTe.this,NoteBookActivity.class);
             startActivity(intent);
         });
 

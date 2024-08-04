@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,7 +67,7 @@ public class CourseActivityStu extends AppCompatActivity {
         });
 
         imageViewAttendance.setOnClickListener(v -> {
-            Intent intent = new Intent(CourseActivityStu.this, AttendanceActivityStu.class);
+            Intent intent = new Intent(CourseActivityStu.this, NoteBookActivity.class);
             startActivity(intent);
         });
 

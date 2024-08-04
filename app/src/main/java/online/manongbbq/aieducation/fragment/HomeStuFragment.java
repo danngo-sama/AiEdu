@@ -16,7 +16,7 @@ import android.widget.TextView;
 import online.manongbbq.aieducation.activity.ChatActivity;
 import online.manongbbq.aieducation.activity.CourseActivityStu;
 import online.manongbbq.aieducation.R;
-import online.manongbbq.aieducation.activity.ReportActivityStu;
+import online.manongbbq.aieducation.activity.MusicRoom;
 import online.manongbbq.aieducation.activity.WrongBookActivity;
 
 import java.text.SimpleDateFormat;
@@ -66,7 +66,7 @@ public class HomeStuFragment extends Fragment {
 
         imageView6.setOnClickListener(v -> {
             v.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.scale));
-            Intent intent = new Intent(getActivity(), ReportActivityStu.class);
+            Intent intent = new Intent(getActivity(), MusicRoom.class);
             startActivity(intent);
         });
 

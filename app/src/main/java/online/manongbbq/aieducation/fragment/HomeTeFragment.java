@@ -18,10 +18,7 @@ import java.util.Locale;
 
 import online.manongbbq.aieducation.R;
 import online.manongbbq.aieducation.activity.ChatActivity;
-import online.manongbbq.aieducation.activity.CourseActivityStu;
 import online.manongbbq.aieducation.activity.CourseActivityTe;
-import online.manongbbq.aieducation.activity.ReportActivityStu;
-import online.manongbbq.aieducation.activity.WrongBookActivity;
 
 public class HomeTeFragment extends Fragment {
 
