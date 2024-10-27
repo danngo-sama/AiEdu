@@ -36,6 +36,18 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button bt3=findViewById(R.id.buttonx);
+
+        bt3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 创建 Intent 跳转到 TargetActivity
+                Intent intent = new Intent(MainActivity.this, HomepageStuActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
         // 检查是否已经登录
         if (sessionManager.isLoggedIn()) {
             if (sessionManager.isStudent()) {
